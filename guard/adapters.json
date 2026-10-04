@@ -1,0 +1,13 @@
+{
+ "_note": "How a host agent platform talks to the guard. The guard works on canonical tool names (Read, Grep, Glob, Write, Edit, MultiEdit, NotebookEdit, Bash, Agent) and on a hook payload of {tool_name, tool_input, cwd, agent_id, agent_type}. A host whose names or fields differ gets an entry here (tool_aliases maps the host's tool name to a canonical one; identity names the payload fields), or a small wrapper that rewrites its payload. Only entries that have been verified against the host's documentation should be added.",
+ "adapters": {
+  "generic": {
+   "tool_aliases": {},
+   "identity": { "id": "agent_id", "type": "agent_type" }
+  },
+  "claude-code": {
+   "tool_aliases": {},
+   "identity": { "id": "agent_id", "type": "agent_type" }
+  }
+ }
+}

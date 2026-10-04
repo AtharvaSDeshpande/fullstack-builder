@@ -1,0 +1,723 @@
+{
+  "spec_version": "1.1",
+  "meta": {
+    "created_by": "example (demo project)",
+    "created_on": "2026-10-04",
+    "client": {
+      "name": "Demo client",
+      "decision_maker_role": "Product owner"
+    },
+    "interview_mode": "hand-written",
+    "source_documents": []
+  },
+  "project": {
+    "name": "ShopOrders",
+    "slug": "shop-orders",
+    "type": "ecommerce",
+    "tagline": "Restock your shop in a few taps",
+    "summary": "A B2B ordering web app where small neighbourhood shop owners in India restock from distributors. Owners reorder similar items every week or two, so repeat ordering and search must be fast."
+  },
+  "business": {
+    "problem": "Shop owners reorder from distributors by phone call or message, which is slow and error-prone.",
+    "why_now": "Demo project to show the full build pipeline.",
+    "goals": [
+      "Let a shop owner place a repeat order in a few taps",
+      "Show a complete ordering flow with mock data"
+    ],
+    "success_metrics": [
+      {
+        "metric": "Time to place a repeat order",
+        "target": "set after baseline",
+        "baseline": "unknown",
+        "how_measured": "usability session on a 360px phone"
+      }
+    ],
+    "business_model": "Distributors pay per order or subscription (not decided; no payments in this build).",
+    "stakeholders": [
+      {
+        "role": "Product owner",
+        "decides": "scope and sign-off"
+      }
+    ],
+    "competitors": [
+      {
+        "name": "none reviewed",
+        "note": "no competitor claims are made in this build"
+      }
+    ],
+    "differentiators": [
+      "Hindi, English and Marathi",
+      "Repeat ordering first",
+      "Works on low-end phones"
+    ],
+    "launch": {
+      "target_date": "none",
+      "type": "pilot"
+    },
+    "budget": {
+      "range": "not set",
+      "notes": ""
+    }
+  },
+  "audience": {
+    "primary_users": "Small shop owners",
+    "devices": [
+      "low-end Android phone",
+      "desktop"
+    ],
+    "network": "patchy 3G/4G with low data balance",
+    "notes": "Mixed literacy. Many prefer Hindi or Marathi over English. They reorder similar items every week or two.",
+    "personas": [
+      {
+        "id": "shop-owner",
+        "name": "Store owner",
+        "description": "Runs a small neighbourhood grocery store and restocks every week or two.",
+        "goals": [
+          "Restock quickly",
+          "Avoid running out of fast-moving items"
+        ],
+        "pain_points": [
+          "Slow phone and patchy data",
+          "Typing English product names"
+        ],
+        "tech_comfort": "low",
+        "devices": [
+          "low-end Android phone"
+        ],
+        "languages": [
+          "hi",
+          "mr",
+          "en"
+        ],
+        "usage_frequency": "weekly"
+      }
+    ]
+  },
+  "brand": {
+    "name_constant": "ShopOrders",
+    "logo": "original-svg",
+    "tone": "plain, friendly, direct",
+    "palette_hint": "warm and trustworthy",
+    "forbidden": [
+      "real brand names",
+      "real brand logos"
+    ]
+  },
+  "languages": {
+    "default": "en",
+    "supported": [
+      "en",
+      "hi",
+      "mr"
+    ],
+    "formats": {
+      "currency": "INR",
+      "locale_map": {
+        "en": "en-IN",
+        "hi": "hi-IN",
+        "mr": "mr-IN"
+      }
+    }
+  },
+  "stack": {
+    "frontend": {
+      "framework": "react",
+      "build": "vite",
+      "ui_library": "material-ui",
+      "router": "react-router-dom",
+      "i18n": "react-i18next",
+      "search": "fuse.js"
+    },
+    "backend": {
+      "mode": "mock",
+      "api_style": "rest",
+      "mock_tool": "msw"
+    },
+    "database": {
+      "engine": ""
+    },
+    "auth": {
+      "method": "phone-otp-mock"
+    },
+    "testing": [
+      "vitest",
+      "testing-library"
+    ],
+    "deploy": {
+      "target": ""
+    }
+  },
+  "features": [
+    {
+      "id": "auth",
+      "name": "Phone and OTP login",
+      "priority": "must",
+      "description": "Mock phone and OTP sign-in with resend timer, language switcher and visible demo credentials.",
+      "screens": [
+        "login"
+      ],
+      "tags": [
+        "auth"
+      ]
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "priority": "must",
+      "description": "Reorder shortcuts, categories, recent orders and offers computed from mock data.",
+      "screens": [
+        "home"
+      ],
+      "tags": []
+    },
+    {
+      "id": "catalog",
+      "name": "Catalog and product detail",
+      "priority": "must",
+      "description": "Browse by category with filters, sort and pagination; product detail with pack size, MRP, wholesale price and minimum order quantity.",
+      "screens": [
+        "catalog",
+        "product"
+      ],
+      "tags": []
+    },
+    {
+      "id": "search",
+      "name": "Robust search",
+      "priority": "must",
+      "description": "Search across English, Devanagari and transliterated names, synonyms, brand and category; tolerates typos; suggestions, recent searches, filters, sort, highlighted matches.",
+      "screens": [
+        "search"
+      ],
+      "tags": [
+        "search"
+      ]
+    },
+    {
+      "id": "cart",
+      "name": "Cart",
+      "priority": "must",
+      "description": "Add, change and remove items with minimum order quantity rules.",
+      "screens": [
+        "cart"
+      ],
+      "tags": []
+    },
+    {
+      "id": "checkout",
+      "name": "Checkout",
+      "priority": "must",
+      "description": "Delivery slot, distributor, payment mode (cash on delivery, credit, UPI mock); one order per distributor.",
+      "screens": [
+        "checkout",
+        "order-confirmation"
+      ],
+      "tags": []
+    },
+    {
+      "id": "orders",
+      "name": "Orders and status timeline",
+      "priority": "must",
+      "description": "Orders list and order detail with a status timeline.",
+      "screens": [
+        "orders",
+        "order-detail"
+      ],
+      "tags": []
+    },
+    {
+      "id": "reorder",
+      "name": "Reorder",
+      "priority": "must",
+      "description": "Reorder a past order with handling of changed prices, out-of-stock and discontinued items.",
+      "screens": [
+        "orders",
+        "order-detail"
+      ],
+      "tags": []
+    },
+    {
+      "id": "profile",
+      "name": "Profile and settings",
+      "priority": "should",
+      "description": "Language and store details.",
+      "screens": [
+        "profile"
+      ],
+      "tags": []
+    },
+    {
+      "id": "help",
+      "name": "Help",
+      "priority": "could",
+      "description": "Short help content.",
+      "screens": [
+        "help"
+      ],
+      "tags": []
+    }
+  ],
+  "screens": [
+    {
+      "id": "login",
+      "name": "Login",
+      "route": "/login",
+      "auth_required": false,
+      "features": [
+        "auth"
+      ]
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "route": "/",
+      "auth_required": true,
+      "features": [
+        "home"
+      ]
+    },
+    {
+      "id": "catalog",
+      "name": "Catalog",
+      "route": "/catalog",
+      "auth_required": true,
+      "features": [
+        "catalog"
+      ]
+    },
+    {
+      "id": "search",
+      "name": "Search",
+      "route": "/search",
+      "auth_required": true,
+      "features": [
+        "search"
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product detail",
+      "route": "/product/:id",
+      "auth_required": true,
+      "features": [
+        "catalog"
+      ]
+    },
+    {
+      "id": "cart",
+      "name": "Cart",
+      "route": "/cart",
+      "auth_required": true,
+      "features": [
+        "cart"
+      ]
+    },
+    {
+      "id": "checkout",
+      "name": "Checkout",
+      "route": "/checkout",
+      "auth_required": true,
+      "features": [
+        "checkout"
+      ]
+    },
+    {
+      "id": "order-confirmation",
+      "name": "Order confirmation",
+      "route": "/order-confirmation/:id",
+      "auth_required": true,
+      "features": [
+        "checkout"
+      ]
+    },
+    {
+      "id": "orders",
+      "name": "Orders",
+      "route": "/orders",
+      "auth_required": true,
+      "features": [
+        "orders",
+        "reorder"
+      ]
+    },
+    {
+      "id": "order-detail",
+      "name": "Order detail",
+      "route": "/orders/:id",
+      "auth_required": true,
+      "features": [
+        "orders",
+        "reorder"
+      ]
+    },
+    {
+      "id": "profile",
+      "name": "Profile",
+      "route": "/profile",
+      "auth_required": true,
+      "features": [
+        "profile"
+      ]
+    },
+    {
+      "id": "help",
+      "name": "Help",
+      "route": "/help",
+      "auth_required": true,
+      "features": [
+        "help"
+      ]
+    }
+  ],
+  "data": {
+    "entities": [
+      {
+        "name": "product",
+        "fields": [
+          "id",
+          "name{en,hi,mr}",
+          "synonyms",
+          "category",
+          "brand",
+          "packSize",
+          "unit",
+          "mrp",
+          "wholesalePrice",
+          "minOrderQty",
+          "stock",
+          "distributorId",
+          "tags"
+        ]
+      },
+      {
+        "name": "order",
+        "fields": [
+          "id",
+          "distributorId",
+          "status",
+          "paymentMode",
+          "deliverySlot",
+          "lines",
+          "subtotal",
+          "timeline"
+        ]
+      },
+      {
+        "name": "distributor",
+        "fields": [
+          "id",
+          "name{en,hi,mr}",
+          "city",
+          "categoryIds",
+          "minOrderValue",
+          "deliverySlots"
+        ]
+      },
+      {
+        "name": "user",
+        "fields": [
+          "id",
+          "phone",
+          "ownerName",
+          "storeName",
+          "city",
+          "preferredLanguage"
+        ]
+      }
+    ],
+    "seed": {
+      "min_records": {
+        "product": 120,
+        "distributor": 3
+      },
+      "source_files": []
+    }
+  },
+  "api": {
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/api/auth/otp",
+        "purpose": "Send OTP"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/verify",
+        "purpose": "Verify OTP and return a session"
+      },
+      {
+        "method": "GET",
+        "path": "/api/me",
+        "purpose": "Current user"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/me",
+        "purpose": "Update profile"
+      },
+      {
+        "method": "GET",
+        "path": "/api/categories",
+        "purpose": "Categories"
+      },
+      {
+        "method": "GET",
+        "path": "/api/products",
+        "purpose": "Products with filters, sort and pagination"
+      },
+      {
+        "method": "GET",
+        "path": "/api/products/:id",
+        "purpose": "Product detail"
+      },
+      {
+        "method": "GET",
+        "path": "/api/search",
+        "purpose": "Search"
+      },
+      {
+        "method": "GET",
+        "path": "/api/search/suggest",
+        "purpose": "Search suggestions"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cart",
+        "purpose": "Read cart"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/cart",
+        "purpose": "Save cart"
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders",
+        "purpose": "Place order"
+      },
+      {
+        "method": "GET",
+        "path": "/api/orders",
+        "purpose": "List orders"
+      },
+      {
+        "method": "GET",
+        "path": "/api/orders/:id",
+        "purpose": "Order detail"
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders/:id/reorder",
+        "purpose": "Reorder with change report"
+      },
+      {
+        "method": "GET",
+        "path": "/api/distributors",
+        "purpose": "Distributors"
+      }
+    ]
+  },
+  "integrations": [],
+  "nonfunctional": {
+    "performance": "Route-level code splitting, paginated or virtualised lists, no external images, report production bundle size",
+    "accessibility": "WCAG AA",
+    "breakpoints": [
+      360,
+      768,
+      1280
+    ],
+    "browsers": [
+      "Chrome on Android",
+      "latest Chrome"
+    ],
+    "security": [
+      "no secrets in the repo"
+    ],
+    "seo": false,
+    "performance_budget": {
+      "max_bundle_kb": "report only",
+      "target_load": "usable on 3G"
+    }
+  },
+  "constraints": {
+    "libraries_forbidden": [
+      "other UI libraries besides Material UI"
+    ],
+    "no_external_images": true,
+    "secrets": "env",
+    "never": [
+      "real brand names or logos",
+      "invented statistics on screen",
+      "lorem ipsum",
+      "dead buttons",
+      "console errors"
+    ],
+    "max_agent_calls": 25
+  },
+  "journeys": [
+    {
+      "id": "first-reorder",
+      "persona": "shop-owner",
+      "goal": "Repeat last week's order",
+      "steps": [
+        "Log in",
+        "Open orders",
+        "Open last order",
+        "Reorder",
+        "Review changes",
+        "Place order"
+      ],
+      "success": "Order placed with changed prices or stock shown before payment",
+      "features": [
+        "auth",
+        "orders",
+        "reorder",
+        "checkout"
+      ]
+    },
+    {
+      "id": "find-new-item",
+      "persona": "shop-owner",
+      "goal": "Find a new product by name in any language",
+      "steps": [
+        "Open search",
+        "Type a name (English, Hindi or typo)",
+        "Pick a result",
+        "Add to cart"
+      ],
+      "success": "Item found and in the cart",
+      "features": [
+        "search",
+        "cart"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "owner",
+      "name": "Store owner",
+      "can": [
+        "browse",
+        "search",
+        "order",
+        "view own orders"
+      ],
+      "cannot": [
+        "see other stores' orders"
+      ]
+    }
+  ],
+  "design": {
+    "style": "warm, simple, large touch targets",
+    "references": [],
+    "avoid": [
+      "dense tables on mobile"
+    ],
+    "colors": {
+      "primary": "",
+      "secondary": "",
+      "notes": "warm and trustworthy"
+    },
+    "fonts": "system fonts plus Noto Sans Devanagari",
+    "dark_mode": false,
+    "density": "comfortable",
+    "logo_notes": "original inline SVG, no real brand marks",
+    "imagery": "no external images"
+  },
+  "content": {
+    "voice": "plain, friendly, direct",
+    "copy_owner": "product owner",
+    "sample_phrases": [],
+    "legal_pages": [],
+    "translation_review": "native speakers (not yet arranged)"
+  },
+  "notifications": {
+    "channels": [],
+    "events": []
+  },
+  "payments": {
+    "needed": true,
+    "methods": [
+      "cash on delivery",
+      "credit",
+      "UPI (mock)"
+    ],
+    "provider": "none",
+    "mocked": true
+  },
+  "analytics": {
+    "tool": "none",
+    "events": [],
+    "privacy_notes": "no tracking in this build"
+  },
+  "compliance": {
+    "data_collected": [
+      "phone number",
+      "store name"
+    ],
+    "pii": true,
+    "regulations": [],
+    "consent": "demo login only",
+    "retention": "mock data, in browser only",
+    "data_residency": "not applicable",
+    "age_limit": ""
+  },
+  "operations": {
+    "hosting": "local only",
+    "environments": [
+      "local"
+    ],
+    "domain": "",
+    "monitoring": "",
+    "backups": "",
+    "support_contact_role": "",
+    "ci": ""
+  },
+  "timeline": {
+    "deadline": "",
+    "hard_deadline": false,
+    "milestones": []
+  },
+  "risks": [
+    {
+      "risk": "Hindi and Marathi wording may be unnatural",
+      "impact": "medium",
+      "mitigation": "native speaker review before any pilot"
+    }
+  ],
+  "dependencies": [],
+  "assumptions": [
+    {
+      "statement": "Mock data is enough for this build",
+      "confirmed_by_client": true
+    }
+  ],
+  "decisions": [
+    {
+      "topic": "Real backend?",
+      "answer": "No, MSW mock only",
+      "source": "client"
+    }
+  ],
+  "open_questions": [],
+  "acceptance": [
+    "A user can log in with phone 9999999999 and OTP 123456; a wrong OTP shows a clear error and protected routes redirect to login",
+    "The app looks professional: one consistent theme, the ShopOrders name and logo, and no unstyled or broken screens",
+    "The layout works at 360, 768 and 1280px with no horizontal scroll, bottom navigation on mobile and 48px minimum touch targets",
+    "Mock data has at least 120 products, 10 categories and 3 distributors, and every listed API endpoint responds",
+    "Search finds results for 'atta', 'आटा', 'aata' and the typo 'sugr', with suggestions, filters and sort working",
+    "English, Hindi and Marathi are complete on every screen with zero hardcoded text and Intl formatting for currency, dates and numbers",
+    "The full flow works: login, search, add to cart, checkout, order placed, order detail and reorder",
+    "Every data screen has loading, empty and error states, and the offline switch shows a clear message",
+    "Lint, tests and build pass with zero warnings, no console.log and no unused code",
+    "The production bundle size is reported in the final report"
+  ],
+  "out_of_scope": [
+    "real backend",
+    "real payments",
+    "real SMS OTP"
+  ],
+  "unknowns": [
+    "Hindi and Marathi wording needs review by native speakers"
+  ]
+}

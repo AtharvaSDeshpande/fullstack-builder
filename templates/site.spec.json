@@ -1,0 +1,367 @@
+{
+  "spec_version": "1.1",
+  "meta": {
+    "created_by": "<who wrote this spec>",
+    "created_on": "<YYYY-MM-DD>",
+    "client": {
+      "name": "<client or team>",
+      "decision_maker_role": "<who signs off>"
+    },
+    "interview_mode": "<quick | full | hand-written>",
+    "source_documents": []
+  },
+  "project": {
+    "name": "<product name>",
+    "slug": "<kebab-case-folder-name>",
+    "type": "<web-app | marketing-site | dashboard | ecommerce | portal | internal-tool>",
+    "tagline": "<optional one line>",
+    "summary": "<2 to 3 sentences: what it is and why it exists>"
+  },
+  "business": {
+    "problem": "<the problem in the client's words>",
+    "why_now": "<why this, why now>",
+    "goals": [
+      "<business goal>"
+    ],
+    "success_metrics": [
+      {
+        "metric": "<what is measured>",
+        "target": "<number, or \"set after baseline\">",
+        "baseline": "<today's value or \"unknown\">",
+        "how_measured": "<source>"
+      }
+    ],
+    "business_model": "<how it earns or saves money, or \"internal tool\">",
+    "stakeholders": [
+      {
+        "role": "<role>",
+        "decides": "<what they decide>"
+      }
+    ],
+    "competitors": [
+      {
+        "name": "<name or \"none known\">",
+        "note": "<what they do>"
+      }
+    ],
+    "differentiators": [
+      "<why users pick this>"
+    ],
+    "launch": {
+      "target_date": "<date or \"none\">",
+      "type": "<pilot | public | internal>"
+    },
+    "budget": {
+      "range": "<range or \"not set\">",
+      "notes": ""
+    }
+  },
+  "audience": {
+    "primary_users": "<who uses it>",
+    "devices": [
+      "<e.g. low-end Android, desktop>"
+    ],
+    "network": "<e.g. patchy 3G/4G>",
+    "notes": "<literacy, language, context of use>",
+    "personas": [
+      {
+        "id": "<persona-id>",
+        "name": "<label, not a real person>",
+        "description": "<who they are>",
+        "goals": [
+          "<goal>"
+        ],
+        "pain_points": [
+          "<pain>"
+        ],
+        "tech_comfort": "<low | medium | high>",
+        "devices": [
+          "<device>"
+        ],
+        "languages": [
+          "en"
+        ],
+        "usage_frequency": "<e.g. weekly>"
+      }
+    ]
+  },
+  "brand": {
+    "name_constant": "<name shown in the UI>",
+    "logo": "original-svg",
+    "tone": "<e.g. plain, friendly>",
+    "palette_hint": "<optional>",
+    "forbidden": [
+      "<e.g. real brand names>"
+    ]
+  },
+  "languages": {
+    "default": "en",
+    "supported": [
+      "en"
+    ],
+    "formats": {
+      "currency": "INR",
+      "locale_map": {
+        "en": "en-IN"
+      }
+    }
+  },
+  "stack": {
+    "frontend": {
+      "framework": "react",
+      "build": "vite",
+      "ui_library": "material-ui",
+      "router": "react-router-dom"
+    },
+    "backend": {
+      "mode": "mock",
+      "runtime": "",
+      "framework": "",
+      "api_style": "rest"
+    },
+    "database": {
+      "engine": ""
+    },
+    "auth": {
+      "method": ""
+    },
+    "testing": [
+      "vitest",
+      "testing-library"
+    ],
+    "deploy": {
+      "target": ""
+    }
+  },
+  "features": [
+    {
+      "id": "<feature-id>",
+      "name": "<feature name>",
+      "priority": "must",
+      "description": "<what the user can do>",
+      "screens": [
+        "<screen-id>"
+      ],
+      "tags": []
+    }
+  ],
+  "screens": [
+    {
+      "id": "<screen-id>",
+      "name": "<screen name>",
+      "route": "/",
+      "auth_required": false,
+      "features": [
+        "<feature-id>"
+      ]
+    }
+  ],
+  "data": {
+    "entities": [
+      {
+        "name": "<entity>",
+        "fields": [
+          "<field>"
+        ]
+      }
+    ],
+    "seed": {
+      "min_records": {
+        "<entity>": 10
+      },
+      "source_files": []
+    }
+  },
+  "api": {
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/api/<thing>",
+        "purpose": "<what it returns>"
+      }
+    ]
+  },
+  "integrations": [],
+  "nonfunctional": {
+    "performance": "<e.g. route-level code splitting, no external images>",
+    "accessibility": "WCAG AA",
+    "breakpoints": [
+      360,
+      768,
+      1280
+    ],
+    "browsers": [
+      "<e.g. Chrome Android, latest Chrome>"
+    ],
+    "security": [
+      "<e.g. validate input server-side>"
+    ],
+    "seo": false,
+    "performance_budget": {
+      "max_bundle_kb": "<number or \"report only\">",
+      "target_load": "<e.g. interactive in 5s on 3G>"
+    }
+  },
+  "constraints": {
+    "libraries_forbidden": [],
+    "forbidden_packages": [],
+    "no_external_images": true,
+    "secrets": "env",
+    "max_agent_calls": 25,
+    "never": [
+      "<anything the build must never contain>"
+    ]
+  },
+  "journeys": [
+    {
+      "id": "<journey-id>",
+      "persona": "<persona-id>",
+      "goal": "<what the user wants>",
+      "steps": [
+        "<step 1>",
+        "<step 2>"
+      ],
+      "success": "<how we know it worked>",
+      "features": [
+        "<feature-id>"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "<role-id>",
+      "name": "<role>",
+      "can": [
+        "<allowed action>"
+      ],
+      "cannot": [
+        "<blocked action>"
+      ]
+    }
+  ],
+  "design": {
+    "style": "<e.g. clean, warm, dense>",
+    "references": [
+      "<URL or app name the client likes>"
+    ],
+    "avoid": [
+      "<what the client dislikes>"
+    ],
+    "colors": {
+      "primary": "",
+      "secondary": "",
+      "notes": ""
+    },
+    "fonts": "",
+    "dark_mode": false,
+    "density": "<compact | comfortable>",
+    "logo_notes": "",
+    "imagery": "<e.g. illustrations only>"
+  },
+  "content": {
+    "voice": "<how the product speaks>",
+    "copy_owner": "<who writes final copy>",
+    "sample_phrases": [],
+    "legal_pages": [
+      "<e.g. privacy, terms>"
+    ],
+    "translation_review": "<who reviews non-default languages>"
+  },
+  "notifications": {
+    "channels": [],
+    "events": []
+  },
+  "payments": {
+    "needed": false,
+    "methods": [],
+    "provider": "",
+    "mocked": true
+  },
+  "analytics": {
+    "tool": "",
+    "events": [
+      {
+        "name": "<event>",
+        "trigger": "<when it fires>"
+      }
+    ],
+    "privacy_notes": ""
+  },
+  "compliance": {
+    "data_collected": [
+      "<e.g. phone number>"
+    ],
+    "pii": false,
+    "regulations": [],
+    "consent": "",
+    "retention": "",
+    "data_residency": "",
+    "age_limit": ""
+  },
+  "operations": {
+    "hosting": "",
+    "environments": [
+      "local"
+    ],
+    "domain": "",
+    "monitoring": "",
+    "backups": "",
+    "support_contact_role": "",
+    "ci": ""
+  },
+  "timeline": {
+    "deadline": "",
+    "hard_deadline": false,
+    "milestones": [
+      {
+        "name": "<milestone>",
+        "when": "<date or week>",
+        "deliverable": "<what exists>"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "<what could go wrong>",
+      "impact": "<low | medium | high>",
+      "mitigation": "<what we do>"
+    }
+  ],
+  "dependencies": [
+    {
+      "what": "<what we wait on>",
+      "owner": "<who>"
+    }
+  ],
+  "assumptions": [
+    {
+      "statement": "<what we are assuming>",
+      "confirmed_by_client": false
+    }
+  ],
+  "decisions": [
+    {
+      "topic": "<question asked>",
+      "answer": "<answer>",
+      "source": "<client | document | pm-default>"
+    }
+  ],
+  "open_questions": [
+    {
+      "question": "<what is unresolved>",
+      "owner": "<who answers>",
+      "needed_by": "<date or phase>"
+    }
+  ],
+  "acceptance": [
+    "<testable statement 1, e.g. A user can sign in with the demo login and reach the home screen>",
+    "<testable statement 2>",
+    "<testable statement 3>"
+  ],
+  "out_of_scope": [
+    "<what this build will not do>"
+  ],
+  "unknowns": [
+    "<things the PM must not assume>"
+  ]
+}

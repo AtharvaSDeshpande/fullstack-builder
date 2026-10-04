@@ -1,0 +1,450 @@
+{
+ "_note": "Single source of truth for what every agent may do. Paths are relative to the project folder; '@root/' means the session root; '{run}' is the active run folder. Edit this file, then re-run setup.mjs install. Agents cannot edit it.",
+ "max_agent_calls_default": 25,
+ "protected": [
+  "@root/.fullstack-builder/",
+  "@root/.claude/",
+  "@root/.codex/",
+  "@root/.gemini/",
+  "@root/.agents/",
+  "@root/.cursor/",
+  "@root/.git/",
+  "@root/site.spec.json",
+  "@root/site.spec.md",
+  "@root/site.spec.normalized.json",
+  ".git/",
+  "docs/spec.lock.json",
+  "docs/runs/CURRENT",
+  "docs/runs/INDEX.md",
+  "docs/runs/*/spawns.log",
+  "docs/runs/*/guard-log.jsonl",
+  "docs/runs/*/canary.ok",
+  "docs/runs/*/waves.json",
+  "docs/runs/*/wave-state.json",
+  "docs/runs/*/bus/receipts/"
+ ],
+ "profiles": {
+  "pm": {
+   "role": "Master Product Manager",
+   "job": "Plan, brief agents, log, hand the decision to the human",
+   "tools": "*",
+   "read_skill": true,
+   "write": [
+    "docs/CONTRACTS.md",
+    "docs/TRACEABILITY.md",
+    "docs/spec.lock.json",
+    "docs/runs/{run}/",
+    "@root/site.spec.normalized.json"
+   ],
+   "bash": [
+    "pm-scripts",
+    "project-checks",
+    "run-app",
+    "install-deps",
+    "readonly-git",
+    "npm-view"
+   ]
+  },
+  "guard-canary": {
+   "role": "Guard canary",
+   "job": "Prove the guard works. The PM briefs the exact probes",
+   "tools": [
+    "Read",
+    "Write",
+    "Bash"
+   ],
+   "write": [
+    "docs/runs/{run}/agents/canary-allowed.txt"
+   ],
+   "bash": []
+  },
+  "a1-architect": {
+   "role": "Senior front-end architect",
+   "job": "Scaffold, folder structure, build and lint config, performance, contracts",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "package.json",
+    "package-lock.json",
+    "vite.config.js",
+    "vitest.config.js",
+    "index.html",
+    "eslint.config.js",
+    ".eslintrc.cjs",
+    ".prettierrc",
+    ".prettierignore",
+    ".gitignore",
+    "README.md",
+    "public/vite.svg",
+    "src/main.jsx",
+    "src/App.jsx",
+    "src/index.css",
+    "src/App.css",
+    "src/assets/",
+    "src/app/",
+    "src/routes/",
+    "src/test/setup.js",
+    "docs/CONTRACTS.md"
+   ],
+   "bash": [
+    "architect-setup",
+    "install-deps",
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    1
+   ]
+  },
+  "a2-designer": {
+   "role": "Mobile-first UX/UI designer",
+   "job": "Theme, layout, responsive behaviour, logo, empty/loading/error states",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/theme/",
+    "src/components/layout/",
+    "src/components/brand/",
+    "src/components/feedback/",
+    "public/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a3-frontend": {
+   "per_feature": true,
+   "role": "Frontend engineer",
+   "job": "Screens, hooks and services for one feature",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/features/{feature}/",
+    "src/locales/en/{feature}.json"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    3
+   ]
+  },
+  "a4-backend": {
+   "role": "Backend engineer",
+   "job": "API per contracts: MSW handlers and failure switch, or a real server with validation",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write_mock": [
+    "src/api/",
+    "src/mocks/handlers/",
+    "src/mocks/db/",
+    "src/mocks/browser.js"
+   ],
+   "write_real": [
+    "server/routes/",
+    "server/middleware/",
+    "server/index.js"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a5-data": {
+   "role": "Data engineer",
+   "job": "Entities, schema, migrations, realistic invented seed data",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write_mock": [
+    "src/mocks/seed/"
+   ],
+   "write_real": [
+    "server/db/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a6-auth": {
+   "tag": "auth",
+   "role": "Auth and security engineer",
+   "job": "Login and session flows, route protection, validation, headers, secrets handling",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/security/"
+   ],
+   "write_real": [
+    "server/auth/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a7-i18n": {
+   "role": "Localisation engineer",
+   "job": "Strings per language, Intl formatting, fonts and scripts, language switcher",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/i18n/",
+    "src/locales/en/common.json",
+    "src/locales/en/errors.json",
+    "src/locales/{lang}/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2,
+    4
+   ]
+  },
+  "a8-search": {
+   "tag": "search",
+   "role": "Search relevance engineer",
+   "job": "Relevance, synonyms, transliteration, suggestions, search UI",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a9-integrations": {
+   "role": "Integrations engineer",
+   "job": "Third-party services, mocked unless the spec says real",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/integrations/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    3
+   ]
+  },
+  "a10-devops": {
+   "role": "DevOps engineer",
+   "job": "Local run, env handling, CI, deploy config",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    ".github/",
+    "Dockerfile",
+    "docker-compose.yml",
+    ".dockerignore",
+    ".env.example",
+    "deploy/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    2
+   ]
+  },
+  "a11-content": {
+   "role": "Content and SEO specialist",
+   "job": "Real copy in the spec's voice, titles, descriptions, sitemap",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/content/",
+    "public/sitemap.xml",
+    "public/robots.txt"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    3
+   ]
+  },
+  "a12-qa": {
+   "role": "QA engineer (critic)",
+   "job": "Tests, responsive and language checks, rubric verdicts with evidence",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Edit",
+    "Bash"
+   ],
+   "write": [
+    "src/**/__tests__/",
+    "src/**/*.test.js",
+    "src/**/*.test.jsx",
+    "server/**/__tests__/",
+    "server/**/*.test.js",
+    "src/test/",
+    "docs/QA.md"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git",
+    "npm-view"
+   ],
+   "waves": [
+    5
+   ]
+  },
+  "a13-reviewer": {
+   "role": "Code quality and security reviewer (critic)",
+   "job": "Audit the diff against the clean-code and security rules, rubric verdicts",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Bash"
+   ],
+   "write": [
+    "docs/runs/{run}/agents/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git"
+   ],
+   "waves": [
+    5
+   ]
+  },
+  "a14-debugger": {
+   "role": "Debugger",
+   "job": "Reproduce the problem, find the root cause, name the owning agent. Edits no product code",
+   "tools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "Write",
+    "Bash"
+   ],
+   "write": [
+    "docs/runs/{run}/agents/"
+   ],
+   "bash": [
+    "project-checks",
+    "readonly-git"
+   ],
+   "waves": [
+    1
+   ]
+  }
+ },
+ "guard_managed": [
+  "docs/runs/CURRENT",
+  "docs/runs/INDEX.md",
+  "docs/runs/*/spawns.log",
+  "docs/runs/*/guard-log.jsonl",
+  "docs/runs/*/canary.ok",
+  "docs/runs/*/waves.json",
+  "docs/runs/*/wave-state.json",
+  "docs/runs/*/bus/receipts/",
+  "docs/runs/*/.lock"
+ ]
+}

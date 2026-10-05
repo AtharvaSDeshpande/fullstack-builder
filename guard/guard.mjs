@@ -38,6 +38,7 @@ function buildContext(config, input) {
     config,
     guardDir: GUARD_DIR,
     skillDir: config.skill_dir,
+    skillAlias: config.skill_alias ?? null,
     cwd: input.cwd ?? sessionRoot,
     forbiddenPackages: config.forbidden_packages ?? [],
     protectedEntries: config.protected.map((entry) => expandEntry(entry, base)),

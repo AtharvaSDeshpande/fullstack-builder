@@ -10,6 +10,8 @@ guard/guard.mjs                the hook that checks every tool call of the PM an
 guard/adapters.json            maps a host's tool names and hook fields to the guard's canonical ones
 guard/lib/adapter.mjs          applies that mapping
 AGENTS.md                      one-paragraph pointer for platforms that read AGENTS.md
+container/Dockerfile           optional sandbox image (hard boundary)
+CONTRIBUTING.md, .github/      contribution guide, CI (selftest + smoke test), issue templates
 guard/lib/*.mjs                path scope, shell allowlist, spawn limits, run state
 guard/profiles.json            the one place that says what each agent may write, run and use
 scripts/setup.mjs              `init` (spec templates) and `install <spec>` (hook, config, agent files)
@@ -17,7 +19,8 @@ scripts/guard-report.mjs       summary of blocks and spawns; `--canary` proves t
 scripts/wave.mjs               plans parallel waves, audits and closes each wave
 scripts/bus-report.mjs         shows agent-to-agent mail: open requests, blockers, unread
 guard/lib/bus.mjs, waves.mjs   mail rules and wave state used by the hook
-scripts/guard-selftest.mjs     replays 125 checks through the real hook, offline
+scripts/guard-selftest.mjs     replays the guard's rules through the real hook, offline
+scripts/smoke-test.mjs         whole run lifecycle with stub agents: canary, waves, audits, close (no LLM)
 scripts/validate-spec.mjs      validates a JSON spec (errors stop a run, warnings are logged)
 scripts/new-run.sh             creates a unique run folder and run-log.md
 scripts/close-run.sh           sets final status and adds a line to docs/runs/INDEX.md
@@ -52,9 +55,19 @@ Scope is enforced by a script, not by prompts. `setup.mjs install` installs `gua
 Agents run in parallel waves (the hook refuses a spawn outside the open wave) and talk to each other through write-once message files; the hook blocks an agent's next write or command until it has read mail addressed to it.
 First install: the host may need one restart to see the new agent files, and some hosts require the workspace to be trusted.
 Check it yourself: `node scripts/guard-selftest.mjs`.
-Limits: it controls tool calls, not code your project runs; it is not a container sandbox; `.env` files are blocked from agents but only flagged (not reverted) by the audit.
+Limits: it controls tool calls, not code your project runs; it is not a container sandbox (for a hard boundary use `container/Dockerfile`, see "Container" below); `.env` files are blocked from agents but only flagged (not reverted) by the audit.
 To change what an agent may do, edit `guard/profiles.json` and rerun `setup.mjs install`.
 Every run writes `<project>/docs/runs/<timestamp>-<slug>/run-log.md`.
+
+## Container
+`container/Dockerfile` builds a sandbox: Node 20, git, a non-root user, the skill at `/opt/skills/fullstack-builder`, and only `/workspace` for the agent to work in. Install your agent platform's CLI inside it. It is host-neutral on purpose, and it has not been run here (no Docker on the machine it was written on), so treat it as a starting point.
+```
+docker build -f container/Dockerfile -t fullstack-builder-sandbox .
+docker run --rm -it -v "$PWD/work":/workspace fullstack-builder-sandbox bash
+```
+
+## Contributing
+See `CONTRIBUTING.md` (how to run the checks and how to add support for another agent platform).
 
 ## Sample application: OffPeak Gym
 

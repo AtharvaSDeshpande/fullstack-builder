@@ -5,13 +5,15 @@
  * Usage: node guard-selftest.mjs
  */
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeInput } from '../guard/lib/adapter.mjs';
 
 const SKILL = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+// A skill path with spaces is reached through the alias that setup.mjs creates in the session root.
+const SKILL_CMD = /^[A-Za-z0-9_./@:=+,-]+$/.test(SKILL) ? SKILL : '.fullstack-builder/skill';
 let root = mkdtempSync(join(tmpdir(), 'guard-selftest-'));
 const roots = [root];
 const PROJECT = JSON.parse(readFileSync(join(SKILL, 'examples', 'site.spec.json'), 'utf8')).project.slug;
@@ -83,8 +85,8 @@ function projectAndPathCases() {
 
 function commandAndSpawnCases() {
   const b = (command) => ({ command });
-  expect('runs spec validator', 'pm', 'Bash', b(`node ${SKILL}/scripts/validate-spec.mjs site.spec.json`), 'allow');
-  expect('runs new-run.sh', 'pm', 'Bash', b(`bash ${SKILL}/scripts/new-run.sh ${PROJECT} fix-x`), 'allow');
+  expect('runs spec validator', 'pm', 'Bash', b(`node ${SKILL_CMD}/scripts/validate-spec.mjs site.spec.json`), 'allow');
+  expect('runs new-run.sh', 'pm', 'Bash', b(`bash ${SKILL_CMD}/scripts/new-run.sh ${PROJECT} fix-x`), 'allow');
   expect('runs the build', 'pm', 'Bash', b(`npm --prefix ${PROJECT} run build`), 'allow');
   expect('blocked rm', 'pm', 'Bash', b(`rm -rf ${PROJECT}`), 'deny');
   expect('blocked chaining', 'pm', 'Bash', b(`npm --prefix ${PROJECT} run build && rm -rf x`), 'deny');
@@ -131,8 +133,34 @@ function adapterCases() {
   const adapter = { tool_aliases: { run_shell: 'Bash' }, identity: { id: 'worker_id', type: 'worker_role' } };
   const out = normalizeInput({ tool_name: 'run_shell', worker_id: 'w1', worker_role: 'a4-backend' }, adapter);
   check('adapter maps tool and identity', out.tool_name === 'Bash' && out.agent_id === 'w1' && out.agent_type === 'a4-backend', JSON.stringify(out));
+  const blank = run('node', [join(SKILL, 'scripts', 'validate-spec.mjs'), join(SKILL, 'templates', 'site.spec.json')], root);
+  check('blank template is called out as a template', blank.status === 1 && /looks like a blank template/.test(blank.stdout), blank.stdout.slice(-200));
   const plain = normalizeInput({ tool_name: 'Read', agent_id: 'x', agent_type: 'y' });
   check('adapter defaults pass through', plain.tool_name === 'Read' && plain.agent_type === 'y', JSON.stringify(plain));
+}
+
+function spacedPathCases() {
+  const base = mkdtempSync(join(tmpdir(), 'guard spaced '));
+  roots.push(base);
+  const skillCopy = join(base, 'skill dir');
+  ['guard', 'scripts', 'templates', 'examples'].forEach((name) => cpSync(join(SKILL, name), join(skillCopy, name), { recursive: true }));
+  const saved = root;
+  root = join(base, 'session root');
+  mkdirSync(root);
+  copyFileSync(join(SKILL, 'examples', 'site.spec.json'), join(root, 'site.spec.json'));
+  const install = run('node', [join(skillCopy, 'scripts', 'setup.mjs'), 'install', 'site.spec.json', '--host', 'generic'], root);
+  const alias = join(root, '.fullstack-builder', 'skill');
+  check('install works from a path with spaces', install.status === 0 && lstatSync(alias).isSymbolicLink(), install.stderr + install.stdout);
+  const bash = (command) => ({ command });
+  expect('PM runs a skill script through the alias', 'pm', 'Bash', bash('node .fullstack-builder/skill/scripts/validate-spec.mjs site.spec.json'), 'allow');
+  expect('PM runs it with a leading ./', 'pm', 'Bash', bash('node ./.fullstack-builder/skill/scripts/wave.mjs status'), 'allow');
+  expect('alias cannot reach other scripts', 'pm', 'Bash', bash('node .fullstack-builder/skill/guard/guard.mjs'), 'deny');
+  expect('alias cannot climb out with ..', 'pm', 'Bash', bash('node .fullstack-builder/skill/../../x.mjs'), 'deny');
+  expect('spaced absolute skill path is refused', 'pm', 'Bash', bash(`node ${skillCopy}/scripts/wave.mjs status`), 'deny');
+  expect('agents still cannot use the alias', 'a2-designer', 'Bash', bash('node .fullstack-builder/skill/scripts/wave.mjs status'), 'deny');
+  const created = run('bash', ['.fullstack-builder/skill/scripts/new-run.sh', PROJECT, 'spaced'], root);
+  check('scripts work through the alias', created.status === 0 && /docs\/runs\//.test(created.stdout), created.stderr + created.stdout);
+  root = saved;
 }
 
 function failClosedCases() {
@@ -271,6 +299,7 @@ try {
   canaryFlow();
   failClosedCases();
   adapterCases();
+  spacedPathCases();
   busAndWaveFlow();
 } finally {
   roots.forEach((dir) => rmSync(dir, { recursive: true, force: true }));

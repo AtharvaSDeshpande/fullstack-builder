@@ -18,4 +18,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node scripts/guard-selftest.mjs
+      - run: node scripts/smoke-test.mjs
       - run: node scripts/validate-spec.mjs examples/site.spec.json

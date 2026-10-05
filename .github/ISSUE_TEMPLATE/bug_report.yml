@@ -1,0 +1,28 @@
+name: Bug report
+description: Something in the skill, the guard or the scripts does not behave as documented
+labels: [bug]
+body:
+  - type: input
+    id: platform
+    attributes:
+      label: Agent platform and version
+      description: For example the platform name and how the guard hook was wired (or "advisory, no hook").
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node version and OS
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Output of `node scripts/guard-selftest.mjs`, the run's `guard-log.jsonl` lines, or the command and its output. Remove any keys or personal data first.

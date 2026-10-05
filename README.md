@@ -55,3 +55,49 @@ Check it yourself: `node scripts/guard-selftest.mjs`.
 Limits: it controls tool calls, not code your project runs; it is not a container sandbox; `.env` files are blocked from agents but only flagged (not reverted) by the audit.
 To change what an agent may do, edit `guard/profiles.json` and rerun `setup.mjs install`.
 Every run writes `<project>/docs/runs/<timestamp>-<slug>/run-log.md`.
+
+## Sample application: OffPeak Gym
+
+`sample-application/offpeak-gym/` is a real project produced by this skill on Antigravity, kept in the repo so you can see what the workflow leaves behind. It is a two-sided marketplace where freelance personal trainers book boutique-gym bays by the hour and gym hosts see a payout ledger (React + Vite + MUI front end, Express + SQLite back end, Razorpay and Twilio with sandbox fallbacks). Its own README is `sample-application/offpeak-gym/ReadMe.md`. To try it: `npm install`, `cp .env.example .env`, `npm run seed`, then `npm run server` and `npm run dev`. `npm test` runs 13 tests and `npm run build` succeeds.
+
+### How it maps to the workflow
+
+| Workflow step | Where to look in the sample |
+|---|---|
+| Spec (the single source of truth) | `site.spec.json`, the acceptance list in it, and `docs/spec.lock.json` (identical to the spec at the last run) |
+| Contracts the agents share | `docs/CONTRACTS.md`, `docs/TRACEABILITY.md` (feature to files and tests) |
+| One run per request | `docs/runs/<timestamp>-<slug>/run-log.md`, indexed in `docs/runs/INDEX.md` |
+| Waves | `waves.json` (the plan) and `wave-state.json` (when each agent started and finished) in each run folder |
+| Guard evidence | `guard-log.jsonl` (every block and allow), `spawns.log` (agent calls), `canary.ok` |
+| Critique loop and human gate | section 8 of each run log (PASS/FAIL with evidence per criterion) and section 15 (human decision) |
+| Product code, one folder per feature | `src/features/<feature-id>/`, each with an `index.js` boundary |
+
+### The runs
+
+One BUILD run and eight CHANGE runs, all in one project folder, in order:
+
+| Run | Mode | Request in short | Agent calls |
+|---|---|---|---|
+| `build-offpeak-gym` | build | Build the app from the spec (US pilot, Stripe) | 15 |
+| `add-razorpay` | change | Replace Stripe with Razorpay | 6 |
+| `india-localization` | change | Switch currency, prices and city to India | 9 |
+| `pune-city-fixes` | change | Fix price and map issues, move the pilot to Pune | 9 |
+| `remove-google-maps` | change | Remove the Google Maps key, use a keyless radar map | 5 |
+| `fix-price-currency` | change | Fix currency inconsistencies | 5 |
+| `unify-all-pricing` | change | Second pass: one price source end to end | 5 |
+| `price-breakup-clarity` | change | Show a price breakup wherever two values appear | 4 |
+| `add-readme` | change | Write the project README | 3 |
+
+The sequence shows the loop working as designed: each human reply ("one more pass, prices still inconsistent") becomes a new run with its own plan, rubric, waves and log, and the spec is updated to match (Stripe to Razorpay, USD to INR, Austin to Pune).
+
+### What the evidence does and does not show
+
+Read the logs with these limits in mind:
+
+- **Only the first two runs have a live-guard record.** `build-offpeak-gym` and `add-razorpay` contain `guard-log.jsonl` and `spawns.log`. They show the canary being blocked on 2 forbidden writes and 1 forbidden command, its one permitted write succeeding, and the agent calls counted. They record nothing for the specialist agents' own writes.
+- **Later runs were audited by hand, not by the hook.** Runs 3 to 9 have no guard log, and the canary file in runs 3 to 7 is a hand-written note rather than the output of `guard-report.mjs --canary`. Treat them as advisory-mode runs (see Host support): the wave and status records exist, but nothing was blocked live.
+- **Some logged work falls outside the agent profiles.** For example, run logs credit `a11-content` with edits to `src/App.jsx` and feature components, and `a3-hourly-booking` with edits to `src/App.jsx`. Under `guard/profiles.json` those paths belong to other agents, so a live guard would have blocked or rerouted them.
+- **Run records are incomplete in places.** The first run was never closed (status "in progress") and the first two runs are missing from `docs/runs/INDEX.md`. Every run ends with "Pending human decision" even though the next run shows the human replied.
+- **The sample was built with an earlier layout.** The first run's context list reads `.claude/guard/`, the old guard location (it is now `.fullstack-builder/guard/`). The skill name in the run requests was renamed to `fullstack-builder` after the fact.
+
+Use the sample to see the shape of the artefacts and the product the workflow produced. Do not read it as proof of enforcement; for that, run `node scripts/guard-selftest.mjs` and the canary on a host that supports hooks.

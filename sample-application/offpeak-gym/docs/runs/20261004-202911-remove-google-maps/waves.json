@@ -1,0 +1,17 @@
+{
+  "mode": "build",
+  "created": "2026-10-04T15:00:24.997Z",
+  "waves": [
+    [
+      "a1-architect"
+    ],
+    [
+      "a4-backend",
+      "a8-search"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

@@ -1,0 +1,11 @@
+{"ts":"2026-10-04T13:46:06.970Z","agent":"pm","agent_id":null,"tool":"Agent","target":"guard-canary","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:46:07.003Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":"offpeak-gym/canary-outside.txt","decision":"DENY","reason":"outside this agent's allowed paths (docs/runs/{run}/agents/canary-allowed.txt)"}
+{"ts":"2026-10-04T13:46:07.037Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":".claude/guard/canary.txt","decision":"DENY","reason":"protected path (.claude/)"}
+{"ts":"2026-10-04T13:46:07.064Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Bash","target":"curl https://example.com","decision":"DENY","reason":"not on this agent's command allowlist (groups: none)"}
+{"ts":"2026-10-04T13:46:07.092Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":"offpeak-gym/docs/runs/20261004-191601-add-razorpay/agents/canary-allowed.txt","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:46:21.329Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a4-backend","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:46:21.360Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a9-integrations","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:46:21.387Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a3-hourly-booking","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:46:21.416Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a10-devops","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:47:58.110Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a12-qa","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:47:58.142Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a13-reviewer","decision":"ALLOW","reason":""}

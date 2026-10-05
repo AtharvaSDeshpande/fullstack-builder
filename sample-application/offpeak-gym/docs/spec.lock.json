@@ -1,0 +1,951 @@
+{
+  "spec_version": "1.1",
+  "meta": {
+    "created_by": "Antigravity PM Agent",
+    "created_on": "2026-10-04",
+    "client": {
+      "name": "OffPeak Founder",
+      "decision_maker_role": "Product Owner"
+    },
+    "interview_mode": "full",
+    "source_documents": [
+      "bootstrap.md"
+    ]
+  },
+  "project": {
+    "name": "OffPeak Gym",
+    "slug": "offpeak-gym",
+    "type": "portal",
+    "tagline": "Hourly boutique gym bay and turf rentals for independent personal trainers",
+    "summary": "OffPeak Gym is a two-sided marketplace connecting boutique fitness studios with empty off-peak floor space to certified freelance trainers seeking hourly professional equipment access. The platform handles scheduling, automated insurance verification, digital liability waivers, and fee-split payment processing."
+  },
+  "business": {
+    "problem": "Boutique gyms sit empty during off-peak hours (10 AM to 4 PM) losing potential revenue, while freelance personal trainers struggle to find affordable, professional equipment spaces without giving up 60% of their earnings to big commercial gym chains.",
+    "why_now": "Boutique studios face high fixed commercial lease costs and need supplementary revenue streams, while fitness professionals are increasingly choosing independent freelancing over gym employment.",
+    "goals": [
+      "Launch in 1 metro city with 10 gyms, 50 trainers, and 200 completed bookings in the first 90 days",
+      "Validate product-market fit with a 70%+ repeat booking rate by active trainers in month 2",
+      "Achieve ₹5,00,000 monthly gross booking volume within 3 months of launch"
+    ],
+    "success_metrics": [
+      {
+        "metric": "Completed bookings in first 90 days",
+        "target": "200",
+        "baseline": "0",
+        "how_measured": "Booking database records with status completed"
+      },
+      {
+        "metric": "Active trainer 30-day repeat booking rate",
+        "target": "70%",
+        "baseline": "unknown",
+        "how_measured": "Trainers with >= 2 bookings in month 2 divided by trainers with >= 1 booking in month 1"
+      },
+      {
+        "metric": "Gross booking volume (GBV) per month",
+        "target": "₹5,00,000",
+        "baseline": "₹0",
+        "how_measured": "Total payments processed via Razorpay ledger"
+      }
+    ],
+    "business_model": "Split take-rate: 10% trainer booking fee added at checkout plus 5% host processing fee deducted from gym payout",
+    "stakeholders": [
+      {
+        "role": "Product Owner",
+        "decides": "Product roadmap, feature prioritization, and launch approval"
+      },
+      {
+        "role": "Gym Host Advisory Partner",
+        "decides": "Host onboarding terms, equipment safety rules, and facility access protocols"
+      }
+    ],
+    "competitors": [
+      {
+        "name": "Peerspace",
+        "note": "General creative and event space rental platform; lacks gym equipment categorization, recurring trainer workflows, and trainer liability insurance validation"
+      },
+      {
+        "name": "Gympeas / Silofit",
+        "note": "Private micro-gym pods; expensive capital buildout rather than utilizing existing under-used boutique gym floor space"
+      }
+    ],
+    "differentiators": [
+      "Automated trainer Certificate of Insurance (COI) verification and digital client liability waivers",
+      "Zero-friction 60-minute equipment bay booking with automated 10-minute turnover buffers",
+      "Curated boutique equipment zones (powerlifting cages, Olympic platforms, turf sprint lanes, boxing rings)"
+    ],
+    "launch": {
+      "target_date": "2026-11-15",
+      "type": "pilot"
+    },
+    "budget": {
+      "range": "MVP pilot build",
+      "notes": "Focused on MVP functionality with 25 automated agent calls"
+    }
+  },
+  "audience": {
+    "primary_users": "Certified independent personal trainers and boutique gym studio owners",
+    "devices": [
+      "mobile smartphones",
+      "desktop browsers",
+      "tablets"
+    ],
+    "network": "4G/5G mobile data and studio Wi-Fi",
+    "notes": "Trainers book and check-in on-the-go via smartphones; gym owners manage availability and payouts via front-desk desktop/tablet devices.",
+    "personas": [
+      {
+        "id": "trainer-marcus",
+        "name": "Marcus Vance",
+        "description": "Certified independent personal trainer with 12 private clients looking for reliable, professional gym equipment to host private training sessions.",
+        "goals": [
+          "Book specific equipment bays (squat rack, turf) during off-peak midday hours",
+          "Ensure clients sign digital liability waivers quickly before training",
+          "Retain 90% of client billing without paying 60% gym commission"
+        ],
+        "pain_points": [
+          "Commercial gyms ban outside trainers or demand huge commission cuts",
+          "Informal rental arrangements via WhatsApp are disorganized and lack insurance protection",
+          "Arriving at a gym only to find equipment occupied or broken"
+        ],
+        "tech_comfort": "high",
+        "devices": [
+          "iOS/Android smartphone"
+        ],
+        "languages": [
+          "en"
+        ],
+        "usage_frequency": "daily"
+      },
+      {
+        "id": "host-elena",
+        "name": "Elena Rostova",
+        "description": "Owner of an independent boutique strength and conditioning facility with 6 squat racks and a 20-yard turf lane that sit empty between 10 AM and 4 PM.",
+        "goals": [
+          "Monetize idle gym hours to offset high commercial rent",
+          "Protect gym equipment and maintain facility reputation with vetted, insured trainers",
+          "Receive automated, reliable direct deposit payouts twice a month"
+        ],
+        "pain_points": [
+          "Empty gym floor during daytime hours burning overhead rent",
+          "Fear of uninsured trainers causing injuries or damaging expensive equipment",
+          "Admin burden of manually tracking keys, schedules, and cash payments"
+        ],
+        "tech_comfort": "medium",
+        "devices": [
+          "Desktop browser",
+          "iPad at front desk"
+        ],
+        "languages": [
+          "en"
+        ],
+        "usage_frequency": "weekly"
+      }
+    ]
+  },
+  "roles": [
+    {
+      "id": "trainer",
+      "name": "Trainer",
+      "can": [
+        "Browse gym locations and filter by equipment zone",
+        "Upload Certificate of Insurance (COI) for verification",
+        "Book hourly off-peak slots and pay via credit/debit card",
+        "Add client details and send digital liability waiver links",
+        "View booking confirmation, access PIN, and session history"
+      ],
+      "cannot": [
+        "Create gym listings or alter host hourly rates",
+        "Access admin verification queue",
+        "Book slots without active insurance verification"
+      ]
+    },
+    {
+      "id": "host",
+      "name": "Gym Host",
+      "can": [
+        "List gym facilities, bays, equipment zones, and hourly rates",
+        "Set off-peak operating hours and blackout calendar dates",
+        "View upcoming trainer bookings and client waiver statuses",
+        "Inspect earnings ledger and request payout transfers",
+        "Submit incident / overstay reports for disputed sessions"
+      ],
+      "cannot": [
+        "Modify trainer profiles or access other gyms' financial ledgers",
+        "Approve platform-level insurance documents"
+      ]
+    },
+    {
+      "id": "admin",
+      "name": "Platform Admin",
+      "can": [
+        "Review and approve or reject trainer COI insurance submissions",
+        "Inspect all platform bookings, transactions, and commission splits",
+        "Arbitrate incident reports and process manual refunds or dispute adjustments",
+        "Manage gym host verification status"
+      ],
+      "cannot": [
+        "Initiate bookings on behalf of trainers without authorization"
+      ]
+    }
+  ],
+  "brand": {
+    "name_constant": "OffPeak Gym",
+    "logo": "original-svg",
+    "tone": "Athletic, Trustworthy, Frictionless, Exclusive",
+    "palette_hint": "Electric Lime (#E0FE10) accent on Deep Charcoal/Slate (#0F172A) dark mode, crisp white secondary text",
+    "forbidden": [
+      "No trademarked gym chain names in UI copy",
+      "No cheesy clip-art or cartoon imagery",
+      "No flashing banner ads or spammy promotional badges"
+    ]
+  },
+  "design": {
+    "style": "Sleek, high-contrast athletic dark mode with modern typography and card-based layout",
+    "references": [
+      "Equinox mobile app",
+      "Barry's Bootcamp studio portal",
+      "Airbnb host dashboard"
+    ],
+    "avoid": [
+      "Cluttered table-heavy enterprise UI",
+      "Garish bright neon-on-white designs",
+      "Hidden pricing"
+    ],
+    "colors": {
+      "primary": "#E0FE10",
+      "secondary": "#38BDF8",
+      "notes": "High-contrast Electric Lime primary accent for CTAs and status badges on Deep Charcoal (#0F172A) background"
+    },
+    "fonts": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    "dark_mode": true,
+    "density": "comfortable",
+    "logo_notes": "Minimalist SVG monogram mark showing stylized OP intersected with a barbell motif",
+    "imagery": "Curated studio photography of functional turf, racks, and premium workout equipment"
+  },
+  "content": {
+    "voice": "Direct, athletic, and empowering; professional and transparent regarding fees and safety",
+    "copy_owner": "Product Owner",
+    "sample_phrases": [
+      "Monetize your off-peak hours with verified trainers",
+      "Book professional gym floor space by the hour",
+      "Verified insurance & automated waivers included on every booking"
+    ],
+    "legal_pages": [
+      "Terms of Service",
+      "Privacy Policy"
+    ],
+    "translation_review": "Not applicable for English v1"
+  },
+  "languages": {
+    "default": "en",
+    "supported": [
+      "en"
+    ],
+    "formats": {
+      "currency": "INR",
+      "locale_map": {
+        "en": "en-IN"
+      }
+    }
+  },
+  "stack": {
+    "frontend": {
+      "framework": "react",
+      "build": "vite",
+      "ui_library": "material-ui",
+      "router": "react-router-dom"
+    },
+    "backend": {
+      "mode": "real",
+      "runtime": "node",
+      "framework": "express",
+      "api_style": "rest"
+    },
+    "database": {
+      "engine": "sqlite"
+    },
+    "auth": {
+      "method": "google-oauth-and-email-password"
+    },
+    "testing": [
+      "vitest",
+      "testing-library"
+    ],
+    "deploy": {
+      "target": "node-server"
+    }
+  },
+  "features": [
+    {
+      "id": "bay-discovery",
+      "name": "Bay Discovery & Equipment Filtering",
+      "priority": "must",
+      "description": "Search and filter gym spaces by city, equipment zone (power rack, turf, rings), and date/time.",
+      "screens": [
+        "screen-landing",
+        "screen-explore",
+        "screen-bay-detail"
+      ],
+      "tags": [
+        "search",
+        "discovery",
+        "filters"
+      ]
+    },
+    {
+      "id": "hourly-booking",
+      "name": "Hourly Bay Slot Booking & Waiver Checkout",
+      "priority": "must",
+      "description": "Select 60-minute time slot, input client waiver details, and complete payment checkout.",
+      "screens": [
+        "screen-bay-detail",
+        "screen-checkout",
+        "screen-confirmation"
+      ],
+      "tags": [
+        "booking",
+        "checkout",
+        "scheduling"
+      ]
+    },
+    {
+      "id": "insurance-verification",
+      "name": "Trainer Insurance (COI) Verification",
+      "priority": "must",
+      "description": "Upload trainer Certificate of Insurance (COI) document and display verified status.",
+      "screens": [
+        "screen-trainer-dashboard",
+        "screen-admin-queue"
+      ],
+      "tags": [
+        "compliance",
+        "verification",
+        "auth"
+      ]
+    },
+    {
+      "id": "host-payout-ledger",
+      "name": "Gym Host Calendar & Payout Ledger",
+      "priority": "must",
+      "description": "View studio bookings calendar, calculate 10% trainer / 5% host fees, and track payout balance.",
+      "screens": [
+        "screen-host-dashboard"
+      ],
+      "tags": [
+        "host",
+        "payouts",
+        "ledger"
+      ]
+    },
+    {
+      "id": "admin-approval-console",
+      "name": "Admin Approval & Moderation Console",
+      "priority": "must",
+      "description": "Admin queue to review, approve, or reject trainer COIs and arbitrate incident reports.",
+      "screens": [
+        "screen-admin-queue"
+      ],
+      "tags": [
+        "admin",
+        "moderation",
+        "disputes"
+      ]
+    },
+    {
+      "id": "turnover-buffer-management",
+      "name": "Turnover Buffer & Incident Flagging",
+      "priority": "should",
+      "description": "Automated 10-minute transition buffers between consecutive bookings and host overstay reporting.",
+      "screens": [
+        "screen-bay-detail",
+        "screen-host-dashboard"
+      ],
+      "tags": [
+        "operations",
+        "scheduling"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "id": "screen-landing",
+      "name": "Landing & Hero Page",
+      "route": "/",
+      "auth_required": false,
+      "features": [
+        "bay-discovery"
+      ]
+    },
+    {
+      "id": "screen-explore",
+      "name": "Explore & Filter Gym Bays",
+      "route": "/explore",
+      "auth_required": false,
+      "features": [
+        "bay-discovery"
+      ]
+    },
+    {
+      "id": "screen-bay-detail",
+      "name": "Gym Bay Detail & Slot Selector",
+      "route": "/bays/:id",
+      "auth_required": false,
+      "features": [
+        "bay-discovery",
+        "hourly-booking",
+        "turnover-buffer-management"
+      ]
+    },
+    {
+      "id": "screen-checkout",
+      "name": "Booking & Client Waiver Checkout",
+      "route": "/checkout/:slotId",
+      "auth_required": true,
+      "features": [
+        "hourly-booking"
+      ]
+    },
+    {
+      "id": "screen-confirmation",
+      "name": "Booking Confirmation & Access PIN Card",
+      "route": "/booking/confirmed/:bookingId",
+      "auth_required": true,
+      "features": [
+        "hourly-booking"
+      ]
+    },
+    {
+      "id": "screen-trainer-dashboard",
+      "name": "Trainer Dashboard & Bookings",
+      "route": "/trainer/dashboard",
+      "auth_required": true,
+      "features": [
+        "insurance-verification"
+      ]
+    },
+    {
+      "id": "screen-host-dashboard",
+      "name": "Gym Host Management & Payouts",
+      "route": "/host/dashboard",
+      "auth_required": true,
+      "features": [
+        "host-payout-ledger",
+        "turnover-buffer-management"
+      ]
+    },
+    {
+      "id": "screen-admin-queue",
+      "name": "Admin Verification & Incident Console",
+      "route": "/admin/queue",
+      "auth_required": true,
+      "features": [
+        "insurance-verification",
+        "admin-approval-console"
+      ]
+    }
+  ],
+  "data": {
+    "entities": [
+      {
+        "name": "User",
+        "fields": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "phone",
+          "avatar_url",
+          "coi_status",
+          "coi_url",
+          "created_at"
+        ]
+      },
+      {
+        "name": "Gym",
+        "fields": [
+          "id",
+          "host_id",
+          "name",
+          "address",
+          "city",
+          "state",
+          "zip",
+          "lat",
+          "lng",
+          "description",
+          "amenities",
+          "rules",
+          "photos",
+          "access_instructions",
+          "created_at"
+        ]
+      },
+      {
+        "name": "Bay",
+        "fields": [
+          "id",
+          "gym_id",
+          "name",
+          "category",
+          "equipment_tags",
+          "hourly_rate",
+          "offpeak_start",
+          "offpeak_end",
+          "created_at"
+        ]
+      },
+      {
+        "name": "Slot",
+        "fields": [
+          "id",
+          "bay_id",
+          "date",
+          "start_time",
+          "end_time",
+          "status",
+          "buffer_end_time"
+        ]
+      },
+      {
+        "name": "Booking",
+        "fields": [
+          "id",
+          "slot_id",
+          "trainer_id",
+          "host_id",
+          "client_name",
+          "client_email",
+          "waiver_signed",
+          "amount_subtotal",
+          "trainer_fee",
+          "host_fee",
+          "total_charged",
+          "access_pin",
+          "status",
+          "created_at"
+        ]
+      },
+      {
+        "name": "Incident",
+        "fields": [
+          "id",
+          "booking_id",
+          "reporter_id",
+          "reason",
+          "status",
+          "resolution_notes",
+          "created_at"
+        ]
+      }
+    ],
+    "seed": {
+      "min_records": {
+        "Gym": 6,
+        "Bay": 15,
+        "Slot": 60,
+        "Booking": 10
+      },
+      "source_files": []
+    }
+  },
+  "api": {
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/api/bays",
+        "purpose": "List equipment bays with location and category filters"
+      },
+      {
+        "method": "GET",
+        "path": "/api/bays/:id",
+        "purpose": "Get bay details and available 60-min off-peak slots"
+      },
+      {
+        "method": "POST",
+        "path": "/api/bookings",
+        "purpose": "Create booking, record client waiver, and calculate 10% trainer / 5% host fee split"
+      },
+      {
+        "method": "GET",
+        "path": "/api/trainer/bookings",
+        "purpose": "Get trainer active bookings and door access PIN codes"
+      },
+      {
+        "method": "POST",
+        "path": "/api/trainer/coi",
+        "purpose": "Upload trainer Certificate of Insurance document"
+      },
+      {
+        "method": "GET",
+        "path": "/api/host/dashboard",
+        "purpose": "Get gym host schedule and net earnings payout ledger"
+      },
+      {
+        "method": "GET",
+        "path": "/api/admin/coi-queue",
+        "purpose": "Get pending insurance verification submissions"
+      },
+      {
+        "method": "PATCH",
+        "path": "/api/admin/coi/:id",
+        "purpose": "Approve or reject trainer insurance submission"
+      }
+    ]
+  },
+  "integrations": [
+    {
+      "name": "Razorpay Payment Gateway",
+      "purpose": "Payment processing, customer UPI/card/netbanking charging, and marketplace split payouts (10% trainer surcharge, 5% host platform fee)",
+      "real": true,
+      "fallback": "Simulated mock payment response when RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is omitted from .env"
+    },
+    {
+      "name": "Twilio SMS",
+      "purpose": "Sends automated SMS confirmation with access PIN code and 1-hour session reminder to trainer",
+      "real": true,
+      "fallback": "Logged to server console / in-app notification center when TWILIO_ACCOUNT_SID is omitted from .env"
+    }
+  ],
+  "nonfunctional": {
+    "performance": "Route-level code splitting, optimized static assets, response times under 200ms for API endpoints",
+    "accessibility": "WCAG AA",
+    "breakpoints": [
+      360,
+      768,
+      1280
+    ],
+    "browsers": [
+      "Chrome",
+      "Safari",
+      "Firefox",
+      "Edge",
+      "Mobile Safari",
+      "Chrome Android"
+    ],
+    "security": [
+      "Razorpay Standard Checkout client-side tokenization (zero raw card storage on server)",
+      "Strict server-side validation on all API endpoints",
+      "Role-based authorization checks on protected routes",
+      "Environment variables for secrets with no hardcoded credentials"
+    ],
+    "seo": true,
+    "performance_budget": {
+      "max_bundle_kb": "350",
+      "target_load": "usable within 3 seconds on standard 4G"
+    }
+  },
+  "constraints": {
+    "libraries_forbidden": [],
+    "forbidden_packages": [],
+    "no_external_images": false,
+    "secrets": "env",
+    "max_agent_calls": 25,
+    "never": [
+      "Never store raw credit card numbers or CVVs on application servers",
+      "Never display third-party advertisement banners or trackers",
+      "Never allow bookings without an approved Certificate of Insurance (COI) or sandbox bypass toggle",
+      "Never expose Razorpay Key Secret or Twilio auth tokens to the client-side bundle"
+    ]
+  },
+  "journeys": [
+    {
+      "id": "journey-trainer-book-bay",
+      "persona": "trainer-marcus",
+      "goal": "Find an available squat rack bay on Tuesday at 11 AM, complete booking, and receive the studio access PIN",
+      "steps": [
+        "Open OffPeak Gym explore page and filter by 'Squat Rack' and Pune locality",
+        "Select Iron Vault Strength Club in Koregaon Park and inspect Rogue Monster Power Rack #1",
+        "Select Tuesday 11:00 AM - 12:00 PM slot (₹999/hr)",
+        "Enter client name and check the digital waiver confirmation",
+        "Complete checkout via Razorpay modal (total ₹1,098.90 including 10% trainer platform fee)",
+        "Receive instant confirmation card with access instructions and 4-digit studio PIN '4821'"
+      ],
+      "success": "Booking created with status 'confirmed', slot marked booked, and access PIN card visible on confirmation screen",
+      "features": [
+        "bay-discovery",
+        "hourly-booking",
+        "turnover-buffer-management"
+      ]
+    },
+    {
+      "id": "journey-host-view-payouts",
+      "persona": "host-elena",
+      "goal": "Check studio schedule for upcoming off-peak sessions and review net earnings payout breakdown",
+      "steps": [
+        "Sign in as Gym Host Elena and open Host Dashboard",
+        "View weekly calendar highlighting booked off-peak slots with trainer names",
+        "Open Payouts tab to inspect gross booking revenue, 5% platform deduction, and net payout balance in INR",
+        "Confirm next scheduled direct-deposit transfer date"
+      ],
+      "success": "Host can inspect upcoming sessions and accurate fee-split accounting ledger",
+      "features": [
+        "host-payout-ledger"
+      ]
+    },
+    {
+      "id": "journey-admin-verify-coi",
+      "persona": "trainer-marcus",
+      "goal": "Admin verifies trainer insurance certificate so trainer can book bays",
+      "steps": [
+        "Admin opens /admin/queue and locates Marcus Vance's pending COI document",
+        "Admin reviews policy dates and verified professional liability coverage (REPs India / ACE)",
+        "Admin clicks 'Approve Insurance'",
+        "Marcus's account is immediately marked 'Verified' and can book slots"
+      ],
+      "success": "Trainer COI status changes from 'pending' to 'approved', unlocking instant booking",
+      "features": [
+        "insurance-verification",
+        "admin-approval-console"
+      ]
+    }
+  ],
+  "notifications": {
+    "channels": [
+      "in-app",
+      "email",
+      "sms"
+    ],
+    "events": [
+      "booking.confirmed - sends email and SMS with studio access PIN code",
+      "coi.approved - notifies trainer that insurance verification is complete",
+      "payout.processed - notifies host of net funds disbursement"
+    ]
+  },
+  "payments": {
+    "needed": true,
+    "methods": [
+      "upi",
+      "credit_card",
+      "debit_card",
+      "netbanking"
+    ],
+    "provider": "razorpay",
+    "mocked": false
+  },
+  "analytics": {
+    "tool": "internal-event-logger",
+    "events": [
+      {
+        "name": "bay_searched",
+        "trigger": "user applies filter on explore page"
+      },
+      {
+        "name": "slot_selected",
+        "trigger": "trainer clicks an available slot"
+      },
+      {
+        "name": "booking_completed",
+        "trigger": "successful payment checkout"
+      }
+    ],
+    "privacy_notes": "Zero third-party tracking cookies; only first-party application telemetry."
+  },
+  "compliance": {
+    "data_collected": [
+      "trainer name",
+      "email",
+      "phone",
+      "insurance certificate PDF",
+      "client waiver name",
+      "gym address"
+    ],
+    "pii": true,
+    "regulations": [
+      "PCI-DSS (delegated to Razorpay)",
+      "GDPR/CCPA privacy standards"
+    ],
+    "consent": "Explicit consent checkbox for terms of service, host rules, and client liability waiver",
+    "retention": "Trainer and booking transaction records retained for 3 years for tax and liability audit compliance; user accounts and client waiver data deletable on request.",
+    "data_residency": "United States (US-East)",
+    "age_limit": "18+"
+  },
+  "operations": {
+    "hosting": "Node.js host (Vercel, Render, or Railway)",
+    "environments": [
+      "local",
+      "production"
+    ],
+    "domain": "offpeakgym.app",
+    "monitoring": "Express health-check endpoint (/api/health) and error logger",
+    "backups": "Nightly SQLite database snapshot export",
+    "support_contact_role": "Platform Operations Lead",
+    "ci": "Automated npm test running vitest test suite on push"
+  },
+  "timeline": {
+    "deadline": "2026-11-15",
+    "hard_deadline": false,
+    "milestones": [
+      {
+        "name": "Milestone 1: Backend Foundation & Seed Engine",
+        "when": "Day 1-2",
+        "deliverable": "Express server, SQLite schema, seed data script (6 gyms, 15 bays), and REST APIs"
+      },
+      {
+        "name": "Milestone 2: Frontend Booking & Dashboards",
+        "when": "Day 3-5",
+        "deliverable": "React/Vite UI with explore filters, slot selector, checkout flow, host & trainer dashboards"
+      },
+      {
+        "name": "Milestone 3: Verification, Integrations & Tests",
+        "when": "Day 6-7",
+        "deliverable": "Admin queue, Razorpay & Twilio handlers, and Vitest suite passing"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Trainer or client damages studio equipment or causes injury during unstaffed off-peak hours",
+      "impact": "high",
+      "mitigation": "Mandatory verified Certificate of Insurance (COI) / Certification (REPs India / ACE) on file before booking and signed digital client liability waivers."
+    },
+    {
+      "risk": "Trainer overstays 60-minute booking slot into peak gym hours",
+      "impact": "medium",
+      "mitigation": "Enforced 10-minute transition buffers between slots and a 1-click Report Overstay incident flag for gym hosts."
+    },
+    {
+      "risk": "Third-party live API keys not configured during local development",
+      "impact": "low",
+      "mitigation": "Strict .env loading with automatic graceful sandbox fallback for Razorpay and Twilio."
+    }
+  ],
+  "dependencies": [
+    {
+      "what": "Razorpay merchant API Key ID and Key Secret credentials",
+      "owner": "Product Owner"
+    },
+    {
+      "what": "Twilio SMS sending phone number and API credentials",
+      "owner": "Product Owner"
+    }
+  ],
+  "assumptions": [
+    {
+      "statement": "Boutique gym studios will provide physical front-desk or keypad PIN access instructions for approved trainers.",
+      "confirmed_by_client": true
+    },
+    {
+      "statement": "Freelance trainers already hold or can easily obtain verified professional liability insurance policies or recognized certifications (REPs India / ACE).",
+      "confirmed_by_client": true
+    },
+    {
+      "statement": "Standard booking length is 60-minute hourly intervals with a 10-minute automated turnover buffer.",
+      "confirmed_by_client": true
+    }
+  ],
+  "decisions": [
+    {
+      "topic": "Product scope and target users",
+      "answer": "OffPeak Gym: Hourly gym turf and rack rental for freelance personal trainers and boutique gym owners",
+      "source": "client"
+    },
+    {
+      "topic": "Revenue model",
+      "answer": "Split take-rate: 10% trainer booking fee + 5% host processing fee",
+      "source": "client"
+    },
+    {
+      "topic": "Core differentiator",
+      "answer": "Automated liability insurance verification and digital client waivers",
+      "source": "client"
+    },
+    {
+      "topic": "Target launch metrics",
+      "answer": "Launch in 1 metro city with 10 gyms, 50 trainers, and 200 completed bookings in the first 90 days",
+      "source": "client"
+    },
+    {
+      "topic": "User personas and devices",
+      "answer": "Marcus (Trainer on mobile) and Elena (Gym host on desktop/tablet); responsive mobile-first web app",
+      "source": "client"
+    },
+    {
+      "topic": "Roles and permissions",
+      "answer": "Three roles: Trainer, Gym Host, and Admin",
+      "source": "client"
+    },
+    {
+      "topic": "Out of scope for v1",
+      "answer": "Hardware smart lock IoT integration and native mobile app store builds (v1 is mobile-responsive web)",
+      "source": "client"
+    },
+    {
+      "topic": "Third-party services",
+      "answer": "Live Razorpay and Twilio SMS with strict .env loading and sandbox fallbacks; keyless interactive Pune studio radar map",
+      "source": "client"
+    },
+    {
+      "topic": "Seed data volume",
+      "answer": "Realistic seed data with 6-8 boutique gyms and 15-20 equipment bays",
+      "source": "client"
+    },
+    {
+      "topic": "Brand aesthetic and voice",
+      "answer": "Sleek dark mode with electric lime accents, exclusive/boutique tone",
+      "source": "client"
+    },
+    {
+      "topic": "Backend architecture",
+      "answer": "Full-stack Node.js (React/Vite frontend + Express backend) with SQLite database",
+      "source": "client"
+    },
+    {
+      "topic": "Authentication",
+      "answer": "Google OAuth and Email/Password with quick test-role switcher",
+      "source": "client"
+    },
+    {
+      "topic": "Overstay risk mitigation",
+      "answer": "10-minute transition buffers and host 1-click incident reporting",
+      "source": "client"
+    },
+    {
+      "topic": "Agent call budget",
+      "answer": "Standard cap of 25 automated build agent calls",
+      "source": "client"
+    },
+    {
+      "topic": "Payment Gateway",
+      "answer": "Razorpay payment gateway replacing Stripe as primary gateway",
+      "source": "client"
+    },
+    {
+      "topic": "Default currency",
+      "answer": "INR with standard format ₹X,XXX or ₹XXX/hr",
+      "source": "client"
+    },
+    {
+      "topic": "Default session length",
+      "answer": "60-minute slots with 10-minute transition buffer",
+      "source": "pm-default"
+    },
+    {
+      "topic": "Testing framework",
+      "answer": "Vitest and React Testing Library",
+      "source": "pm-default"
+    }
+  ],
+  "open_questions": [
+    {
+      "question": "Should disputed overstay penalties be arbitrated manually by Admin within 24 hours or automatically charged to the trainer card on file?",
+      "owner": "Product Owner",
+      "needed_by": "Milestone 2"
+    }
+  ],
+  "acceptance": [
+    "A trainer can search/filter gyms across Pune by equipment zone (e.g., 'Squat Rack', 'Turf Lane', 'Reformer') and immediately see hourly rates in INR (₹) and available off-peak slots.",
+    "A trainer can select a 60-minute slot, enter client waiver details, complete checkout via Razorpay modal (or automatic sandbox fallback), and instantly receive a booking confirmation card with access instructions and a 4-digit entry PIN.",
+    "A gym host can view their studio booking calendar, inspect trainer reservations, and verify their net earnings in INR with the 10% trainer fee and 5% host platform fee calculated correctly.",
+    "An admin can view submitted trainer Certificates of Insurance / Certifications (REPs India / ACE / Professional Liability) in a verification table and approve or reject them with real-time status updates.",
+    "The app launches cleanly locally (`npm run dev`), pre-seeds 6–8 boutique gyms across Pune with active slots, and operates smoothly with live or sandbox Razorpay and Twilio keys from `.env`.",
+    "All screens follow the dark-mode aesthetic with electric lime accents, responsive on both mobile and desktop (360px to 1280px+), with zero broken links or unstyled elements."
+  ],
+  "out_of_scope": [
+    "Native iOS and Android app store binary builds (v1 is mobile-responsive web)",
+    "Hardware smart lock IoT direct integrations (access instructions and PINs provided in app)",
+    "Client-side payment splitting between personal trainer and client",
+    "Gym equipment direct sales or peer-to-peer equipment borrowing"
+  ],
+  "unknowns": [
+    "Exact commercial insurance policy underwriting requirements for every municipal jurisdiction"
+  ]
+}

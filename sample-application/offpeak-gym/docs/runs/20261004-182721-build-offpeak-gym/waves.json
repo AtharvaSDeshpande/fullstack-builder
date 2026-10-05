@@ -1,0 +1,29 @@
+{
+  "mode": "build",
+  "created": "2026-10-04T12:58:17.728Z",
+  "waves": [
+    [
+      "a1-architect"
+    ],
+    [
+      "a2-designer",
+      "a4-backend",
+      "a5-data",
+      "a6-auth",
+      "a8-search",
+      "a10-devops"
+    ],
+    [
+      "a3-hourly-booking",
+      "a3-host-payout-ledger",
+      "a3-admin-approval-console",
+      "a3-turnover-buffer-management",
+      "a9-integrations",
+      "a11-content"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

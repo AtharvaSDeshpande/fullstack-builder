@@ -1,0 +1,17 @@
+{
+  "mode": "build",
+  "created": "2026-10-04T15:57:46.528Z",
+  "waves": [
+    [
+      "a8-search"
+    ],
+    [
+      "a3-hourly-booking",
+      "a11-content"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

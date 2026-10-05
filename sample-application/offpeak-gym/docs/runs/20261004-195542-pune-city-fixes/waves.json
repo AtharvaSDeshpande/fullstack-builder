@@ -1,0 +1,21 @@
+{
+  "mode": "change",
+  "created": "2026-10-04T14:26:07.636Z",
+  "waves": [
+    [
+      "a1-architect",
+      "a5-data",
+      "a4-backend",
+      "a8-search",
+      "a6-auth",
+      "a11-content"
+    ],
+    [
+      "a2-designer"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

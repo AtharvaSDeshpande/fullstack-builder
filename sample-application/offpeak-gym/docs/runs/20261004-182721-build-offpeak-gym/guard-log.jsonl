@@ -1,0 +1,20 @@
+{"ts":"2026-10-04T12:58:02.947Z","agent":"pm","agent_id":null,"tool":"Agent","target":"guard-canary","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T12:58:02.977Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":"offpeak-gym/canary-outside.txt","decision":"DENY","reason":"outside this agent's allowed paths (docs/runs/{run}/agents/canary-allowed.txt)"}
+{"ts":"2026-10-04T12:58:03.005Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":".claude/guard/canary.txt","decision":"DENY","reason":"protected path (.claude/)"}
+{"ts":"2026-10-04T12:58:03.033Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Bash","target":"curl https://example.com","decision":"DENY","reason":"not on this agent's command allowlist (groups: none)"}
+{"ts":"2026-10-04T12:58:03.061Z","agent":"guard-canary","agent_id":"id-guard-canary","tool":"Write","target":"offpeak-gym/docs/runs/20261004-182721-build-offpeak-gym/agents/canary-allowed.txt","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T12:59:02.306Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a1-architect","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.833Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a2-designer","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.870Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a4-backend","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.899Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a5-data","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.927Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a6-auth","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.956Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a8-search","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:01:58.983Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a10-devops","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:01.890Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a3-hourly-booking","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:01.921Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a3-host-payout-ledger","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:01.949Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a3-admin-approval-console","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:01.977Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a3-turnover-buffer-management","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:02.005Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a9-integrations","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:07:02.033Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a11-content","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:11:06.763Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a12-qa","decision":"ALLOW","reason":""}
+{"ts":"2026-10-04T13:11:06.793Z","agent":"pm","agent_id":null,"tool":"Agent","target":"a13-reviewer","decision":"ALLOW","reason":""}

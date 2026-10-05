@@ -1,0 +1,16 @@
+{
+  "mode": "change",
+  "created": "2026-10-04T13:46:12.784Z",
+  "waves": [
+    [
+      "a4-backend",
+      "a9-integrations",
+      "a3-hourly-booking",
+      "a10-devops"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

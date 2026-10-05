@@ -1,0 +1,17 @@
+{
+  "mode": "build",
+  "created": "2026-10-04T16:03:33.737Z",
+  "waves": [
+    [
+      "a4-backend"
+    ],
+    [
+      "a3-hourly-booking",
+      "a11-content"
+    ],
+    [
+      "a12-qa",
+      "a13-reviewer"
+    ]
+  ]
+}

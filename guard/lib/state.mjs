@@ -12,6 +12,19 @@ const STALE_LOCK_MS = 30_000;
 export const GUARD_HOME = ['.fullstack-builder', 'guard'];
 export const guardConfigFile = (sessionRoot) => join(sessionRoot, ...GUARD_HOME, 'config.json');
 
+/** Tier of a run: 'enforced' only with a canary.ok written by guard-report.mjs; otherwise whatever tier.json says. */
+export const CANARY_VERIFIER = 'guard-report';
+const readJsonFile = (file) => {
+  try {
+    return JSON.parse(readFileSync(file, 'utf8'));
+  } catch {
+    return null;
+  }
+};
+export const canaryPassed = (runDir) => readJsonFile(join(runDir, 'canary.ok'))?.verified_by === CANARY_VERIFIER;
+export const tierFile = (runDir) => join(runDir, 'tier.json');
+export const runTier = (runDir) => (canaryPassed(runDir) ? 'enforced' : readJsonFile(tierFile(runDir))?.tier ?? null);
+
 export const loadConfig = (guardDir) => JSON.parse(readFileSync(join(guardDir, 'config.json'), 'utf8'));
 
 export function currentRun(projectAbs) {

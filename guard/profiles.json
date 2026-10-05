@@ -1,6 +1,7 @@
 {
  "_note": "Single source of truth for what every agent may do. Paths are relative to the project folder; '@root/' means the session root; '{run}' is the active run folder. Edit this file, then re-run setup.mjs install. Agents cannot edit it.",
  "max_agent_calls_default": 25,
+ "passthrough_tools": ["TodoWrite", "Skill", "AskUserQuestion", "ToolSearch", "EnterPlanMode", "ExitPlanMode"],
  "protected": [
   "@root/.fullstack-builder/",
   "@root/.claude/",
@@ -19,6 +20,7 @@
   "docs/runs/*/spawns.log",
   "docs/runs/*/guard-log.jsonl",
   "docs/runs/*/canary.ok",
+  "docs/runs/*/tier.json",
   "docs/runs/*/waves.json",
   "docs/runs/*/wave-state.json",
   "docs/runs/*/bus/receipts/"
@@ -442,6 +444,7 @@
   "docs/runs/*/spawns.log",
   "docs/runs/*/guard-log.jsonl",
   "docs/runs/*/canary.ok",
+  "docs/runs/*/tier.json",
   "docs/runs/*/waves.json",
   "docs/runs/*/wave-state.json",
   "docs/runs/*/bus/receipts/",

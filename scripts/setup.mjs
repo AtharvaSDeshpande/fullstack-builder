@@ -151,6 +151,7 @@ function runInstall(argv) {
     skill_dir: SKILL_DIR,
     max_agent_calls: spec.constraints?.max_agent_calls ?? template.max_agent_calls_default,
     forbidden_packages: [...(spec.constraints?.forbidden_packages ?? []), ...(spec.constraints?.libraries_forbidden ?? [])],
+    passthrough_tools: [...new Set([...(template.passthrough_tools ?? []), ...(adapters[host].passthrough_tools ?? [])])],
     protected: template.protected,
     guard_managed: template.guard_managed,
     agent_types: Object.keys(profiles).filter((id) => id !== 'pm'),

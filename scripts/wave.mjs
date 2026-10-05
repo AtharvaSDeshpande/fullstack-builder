@@ -13,7 +13,7 @@ import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { unreadFor } from '../guard/lib/bus.mjs';
 import { expandEntry, toMatcher } from '../guard/lib/scope.mjs';
-import { checkpoint, countSpawns, currentRun, guardConfigFile, recordSpawn, withLock } from '../guard/lib/state.mjs';
+import { checkpoint, countSpawns, currentRun, guardConfigFile, recordSpawn, runTier, withLock } from '../guard/lib/state.mjs';
 import { applySpawn, completeInFlight, currentWave, evaluateSpawn, inFlight, loadPlan, loadState, savePlan, saveState } from '../guard/lib/waves.mjs';
 
 const CANARY = 'guard-canary';
@@ -94,12 +94,13 @@ function plan(argv) {
   const types = (option(argv, '--agents') ?? '').split(',').filter(Boolean);
   const mode = option(argv, '--mode') ?? 'build';
   if (types.length === 0) fail('--agents is required (comma separated agent types)');
+  if (!runTier(run.dir)) fail('no tier for this run. On a host with a hook, run the canary and guard-report.mjs --canary. On a host without one, run guard-report.mjs --tier advisory (or sequential).');
   if (!['build', 'change'].includes(mode)) fail('--mode must be build or change');
   const unknown = types.find((type) => type === CANARY || !config.agent_types.includes(type));
   if (unknown) fail(`"${unknown}" is not an agent type that can be planned`);
   const waves = wavesFor([...new Set(types)], mode, config);
   withLock(join(run.dir, '.lock'), () => {
-    savePlan(run.dir, { mode, created: new Date().toISOString(), waves });
+    savePlan(run.dir, { mode, tier: runTier(run.dir), created: new Date().toISOString(), waves });
     saveState(run.dir, { started: {}, done: {} });
   });
   const planned = waves.flat().length;
@@ -113,6 +114,7 @@ function start(argv) {
   const { config, run } = load();
   const plan_ = loadPlan(run.dir);
   if (!plan_) fail('no wave plan. Run wave.mjs plan first.');
+  if (runTier(run.dir) === 'enforced') fail('this run is enforced: the hook records spawns itself. wave.mjs start is for advisory and sequential runs only.');
   const types = (option(argv, '--agents') ?? '').split(',').filter(Boolean);
   if (types.length === 0) fail('--agents is required (comma separated agent types)');
   const projectAbs = join(config.session_root, config.project_rel);

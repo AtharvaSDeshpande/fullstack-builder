@@ -2,6 +2,7 @@
 Started: {{STARTED}}
 Finished: -
 Status: in progress
+Host tier: (enforced | advisory | sequential; from `guard-report.mjs`)
 
 ## 1. Request and mode (verbatim)
 

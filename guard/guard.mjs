@@ -12,7 +12,7 @@ import { normalizeInput } from './lib/adapter.mjs';
 import { decideBash } from './lib/bash.mjs';
 import { decideWrite, expandEntry, isEnvFile, relativeToRoot } from './lib/scope.mjs';
 import { busWriteProblem, markRead, outboxDir, unreadFor } from './lib/bus.mjs';
-import { checkpoint, countSpawns, currentRun, loadConfig, recordSpawn, withLock, writeLog } from './lib/state.mjs';
+import { canaryPassed, checkpoint, countSpawns, currentRun, loadConfig, recordSpawn, withLock, writeLog } from './lib/state.mjs';
 import { applySpawn, evaluateSpawn, inFlight, loadPlan, loadState, saveState } from './lib/waves.mjs';
 
 const GUARD_DIR = dirname(fileURLToPath(import.meta.url));
@@ -66,7 +66,7 @@ function decideSpawn(ctx, input) {
     return deny(`"${type}" is not a guarded agent type. Use one of: ${ctx.config.agent_types.join(', ')}`);
   }
   if (!ctx.run) return deny('no active run. Create one with scripts/new-run.sh first');
-  if (type !== CANARY && !existsSync(join(ctx.run.dir, 'canary.ok'))) {
+  if (type !== CANARY && !canaryPassed(ctx.run.dir)) {
     return deny('the guard canary has not passed for this run');
   }
   return withLock(join(ctx.run.dir, '.lock'), () => {
@@ -129,7 +129,8 @@ function decide(ctx, input, who) {
   if (tool in READ_TOOLS) return decideRead(ctx, profile, toolInput[READ_TOOLS[tool]]);
   if (tool === 'Bash') return decideBash({ profile, command: toolInput.command, ctx });
   if (SPAWN_TOOLS.includes(tool)) return decideSpawn(ctx, input);
-  return ALLOW;
+  if ((ctx.config.passthrough_tools ?? []).includes(tool)) return ALLOW;
+  return deny(`tool ${tool} is not recognised by the guard. Map it in guard/adapters.json or list it in passthrough_tools, then rerun setup.mjs install`);
 }
 
 function recordReceipt(ctx, input, who) {

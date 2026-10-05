@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /**
  * Summarises what the guard allowed and blocked in the current run, or verifies the canary.
- * Usage (from the session root): node guard-report.mjs [--canary]
+ * Usage (from the session root): node guard-report.mjs [--canary | --tier advisory|sequential]
  * --canary proves the hook is firing: it checks the canary agent's probes were blocked, its one allowed
- * write went through, no forbidden file exists, then writes canary.ok. Without canary.ok no agent can be spawned.
+ * write went through, no forbidden file exists, then writes canary.ok (the only valid way to get one) and tier.json.
+ * --tier records that this run has no live hook (advisory or sequential). It refuses on a run that already passed the canary.
+ * Without a canary.ok or a recorded tier, wave.mjs plan refuses to start the run.
  */
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { GUARD_HOME, currentRun, guardConfigFile } from '../guard/lib/state.mjs';
+import { CANARY_VERIFIER, GUARD_HOME, canaryPassed, currentRun, guardConfigFile, runTier, tierFile } from '../guard/lib/state.mjs';
 
 const CANARY = 'guard-canary';
 const OUTSIDE_FILE = 'canary-outside.txt';
@@ -51,8 +53,18 @@ function verifyCanary({ log, spawns, run, projectAbs, sessionRoot }) {
   const leaked = forbidden.find((file) => existsSync(file));
   if (leaked) fail(`CANARY FAILED: a forbidden file exists: ${leaked}`);
   if (!existsSync(join(run.dir, 'agents', ALLOWED_FILE))) fail('CANARY FAILED: the permitted canary file was not created.');
-  writeFileSync(join(run.dir, 'canary.ok'), `${JSON.stringify({ passed_at: new Date().toISOString() })}\n`);
+  const proof = { verified_by: CANARY_VERIFIER, passed_at: new Date().toISOString(), blocked_writes: denied('Write'), blocked_commands: denied('Bash'), allowed_writes: allowedWrites.length };
+  writeFileSync(join(run.dir, 'canary.ok'), `${JSON.stringify(proof)}\n`);
+  writeFileSync(tierFile(run.dir), `${JSON.stringify({ tier: 'enforced', set_at: proof.passed_at })}\n`);
   process.stdout.write('CANARY OK: the guard blocked every probe and allowed the permitted one. Agents may now be spawned.\n');
+}
+
+function recordTier(run, tier) {
+  if (!['advisory', 'sequential'].includes(tier)) fail('--tier must be advisory or sequential');
+  if (canaryPassed(run.dir)) fail('This run already passed the canary (enforced). It cannot be downgraded.');
+  const note = 'No pre-tool hook: nothing was blocked live. Scope was only audited after the fact.';
+  writeFileSync(tierFile(run.dir), `${JSON.stringify({ tier, set_at: new Date().toISOString(), note })}\n`);
+  process.stdout.write(`TIER RECORDED: ${tier}. ${note} Log this in the run log and the final report.\n`);
 }
 
 function main() {
@@ -66,6 +78,9 @@ function main() {
   const log = readLines(join(run.dir, 'guard-log.jsonl'));
   const spawns = readLines(join(run.dir, 'spawns.log'));
   if (process.argv.includes('--canary')) return verifyCanary({ log, spawns, run, projectAbs, sessionRoot });
+  const tierIndex = process.argv.indexOf('--tier');
+  if (tierIndex >= 0) return recordTier(run, process.argv[tierIndex + 1]);
+  process.stdout.write(`Tier: ${runTier(run.dir) ?? 'not set'}\n`);
   summarise(log, spawns, config);
 }
 

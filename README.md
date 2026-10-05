@@ -1,6 +1,6 @@
 # fullstack-builder
 
-Spec-driven, multi-agent full-stack website builder and maintainer. Host-neutral: it is Markdown, Node scripts and JSON, so it is designed for any agent platform that can read a skill or instruction file and run shell commands. Only the Claude Code hook wiring is shipped and tested; for other platforms (for example Codex or Antigravity) you wire the hook yourself or run in advisory mode. How strongly scope is enforced depends on the host; see "Host support".
+Spec-driven, multi-agent full-stack website builder and maintainer. Host-neutral: it is Markdown, Node scripts and JSON, so it is designed for any agent platform that can read a skill or instruction file and run shell commands. Only the Claude Code hook wiring is shipped and tested. Antigravity was used to build the sample: its guard logs were written in the first two runs and stopped in later ones (see "Known limit: Antigravity" below). No Antigravity or Codex adapter exists yet; on those platforms you wire a hook yourself or run in advisory mode. How strongly scope is enforced depends on the host; see "Host support".
 
 ## Files
 ```
@@ -17,7 +17,7 @@ scripts/guard-report.mjs       summary of blocks and spawns; `--canary` proves t
 scripts/wave.mjs               plans parallel waves, audits and closes each wave
 scripts/bus-report.mjs         shows agent-to-agent mail: open requests, blockers, unread
 guard/lib/bus.mjs, waves.mjs   mail rules and wave state used by the hook
-scripts/guard-selftest.mjs     replays 110 checks through the real hook, offline
+scripts/guard-selftest.mjs     replays 125 checks through the real hook, offline
 scripts/validate-spec.mjs      validates a JSON spec (errors stop a run, warnings are logged)
 scripts/new-run.sh             creates a unique run folder and run-log.md
 scripts/close-run.sh           sets final status and adds a line to docs/runs/INDEX.md
@@ -34,7 +34,7 @@ examples/site.spec.json        a complete, valid spec (a demo shop-ordering app)
 3. `Run fullstack-builder build from site.spec.json`
 4. Later: `Run fullstack-builder fix <problem>` (also add, change, improve).
 
-Requires Node 18+, npm, git, internet for `npm install`, and an agent platform that can run shell commands. Sub-agents and a pre-tool-call hook are needed for full enforcement (see Host support). `sha256sum` or `shasum` must be on the PATH.
+Requires Node 18+ (the selftest passes locally on Node 18, 20 and 24; CI runs 18, 20 and 22), npm, git, internet for `npm install`, and an agent platform that can run shell commands. Sub-agents and a pre-tool-call hook are needed for full enforcement (see Host support). `sha256sum` or `shasum` must be on the PATH.
 The skill folder path must not contain spaces or shell-special characters (the guard rejects them); install it somewhere like `~/skills/fullstack-builder/`.
 The files in `templates/` are blank on purpose and fail `validate-spec.mjs` until filled in; `examples/site.spec.json` is the valid reference.
 
@@ -42,7 +42,7 @@ The files in `templates/` are blank on purpose and fail `validate-spec.mjs` unti
 | Tier | Host offers | Result |
 |---|---|---|
 | 1. Enforced | pre-tool-call hook (also for sub-agents) with agent identity | full guard: blocks, canary, wave gate, mail gate |
-| 2. Advisory | sub-agents, no hook | briefs, profiles, post-hoc `scope-check` and revert; nothing is blocked live |
+| 2. Advisory | sub-agents, no hook | briefs, profiles, post-hoc `scope-check` and revert; nothing is blocked live. Record it with `guard-report.mjs --tier advisory` |
 | 3. Sequential | neither | one agent plays each role in turn, same audits, no parallel waves or mail |
 
 `node scripts/setup.mjs install <spec> [--host auto|claude-code|generic]` writes the guard to `.fullstack-builder/` in every case. `claude-code` also wires `.claude/settings.json` and `.claude/agents/`; `generic` prints the steps to wire the hook into another platform. Tool names are canonical (`Read`, `Write`, `Edit`, `Bash`, `Agent`, ...); add a host's own names to `guard/adapters.json` after checking its documentation. Only the `claude-code` wiring is shipped; for other hosts the hook wiring is yours to do, and the run reports which tier it ran in.
@@ -95,9 +95,12 @@ The sequence shows the loop working as designed: each human reply ("one more pas
 Read the logs with these limits in mind:
 
 - **Only the first two runs have a live-guard record.** `build-offpeak-gym` and `add-razorpay` contain `guard-log.jsonl` and `spawns.log`. They show the canary being blocked on 2 forbidden writes and 1 forbidden command, its one permitted write succeeding, and the agent calls counted. They record nothing for the specialist agents' own writes.
-- **Later runs were audited by hand, not by the hook.** Runs 3 to 9 have no guard log, and the canary file in runs 3 to 7 is a hand-written note rather than the output of `guard-report.mjs --canary`. Treat them as advisory-mode runs (see Host support): the wave and status records exist, but nothing was blocked live.
+- **Later runs have no guard log (a known Antigravity limit).** On Antigravity the guard logs were created in the first two runs and not in any later run, so runs 3 to 9 have no `guard-log.jsonl`. The canary file in runs 3 to 7 is a hand-written note rather than the output of `guard-report.mjs --canary`. Treat those runs as advisory (see Host support): the wave and status records exist, but nothing was proven blocked live.
 - **Some logged work falls outside the agent profiles.** For example, run logs credit `a11-content` with edits to `src/App.jsx` and feature components, and `a3-hourly-booking` with edits to `src/App.jsx`. Under `guard/profiles.json` those paths belong to other agents, so a live guard would have blocked or rerouted them.
+- **The spec was edited by the agent on the human's instruction.** `site.spec.json`, including `acceptance[]`, was changed between runs by the agent after the human asked for it in chat (Stripe to Razorpay, USD to INR, Austin to Pune). The change is described in each run log, but the human's approval is not recorded there and the acceptance list is not the human's own wording.
 - **Run records are incomplete in places.** The first run was never closed (status "in progress") and the first two runs are missing from `docs/runs/INDEX.md`. Every run ends with "Pending human decision" even though the next run shows the human replied.
 - **The sample was built with an earlier layout.** The first run's context list reads `.claude/guard/`, the old guard location (it is now `.fullstack-builder/guard/`). The skill name in the run requests was renamed to `fullstack-builder` after the fact.
+
+**Known limit: Antigravity.** In this POC, guard logging worked on Antigravity at the start and then stopped producing logs in later runs. The cause is not yet known (for example the hook no longer firing, or the host dropping it between sessions), so on Antigravity do not assume the guard is live: check that `guard-log.jsonl` grows during a run, run the canary at the start of every run, and if the canary or the log is missing, record the run as advisory with `guard-report.mjs --tier advisory`. Tracked in `TODO.md`.
 
 Use the sample to see the shape of the artefacts and the product the workflow produced. Do not read it as proof of enforcement; for that, run `node scripts/guard-selftest.mjs` and the canary on a host that supports hooks.

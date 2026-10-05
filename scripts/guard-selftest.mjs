@@ -98,6 +98,9 @@ function commandAndSpawnCases() {
   expect('blocked git diff --output', 'a2-designer', 'Bash', b('git diff --output=x'), 'deny');
   expect('blocked from spawning', 'a2-designer', 'Agent', { subagent_type: 'a3-cart' }, 'deny');
   expect('blocked web fetch', 'a2-designer', 'WebFetch', { url: 'https://example.com' }, 'deny');
+  expect('unrecognised host tool blocked for the PM', 'pm', 'host_write_file', { path: 'anywhere.txt' }, 'deny');
+  expect('unrecognised host tool blocked for an agent', 'a2-designer', 'host_write_file', { path: 'anywhere.txt' }, 'deny');
+  expect('listed harmless tool passes for the PM', 'pm', 'TodoWrite', { todos: [] }, 'allow');
   expect('installs allowed package', 'a1-architect', 'Bash', b(`npm --prefix ${PROJECT} install react-router-dom`), 'allow');
   expect('blocked forbidden package', 'a1-architect', 'Bash', b(`npm --prefix ${PROJECT} install moment@2.0.0`), 'deny');
   expect('writes vite config', 'a1-architect', 'Write', { file_path: `${PROJECT}/vite.config.js` }, 'allow');
@@ -226,11 +229,36 @@ function waveFinishCases() {
   check('status shows the open wave', /> Wave 2/.test(status.stdout), status.stdout);
 }
 
+function tierCases() {
+  const report = (...args) => run('node', [join(SKILL, 'scripts', 'guard-report.mjs'), ...args], root);
+  const refused = wave('plan', '--agents', 'a2-designer');
+  check('plan refused with no tier', refused.status !== 0 && /no tier/.test(refused.stderr), refused.stderr);
+  writeFileSync(join(runPath(), 'canary.ok'), '{}');
+  expect('hand-written canary.ok does not open spawning', 'pm', 'Agent', { subagent_type: 'a2-designer', description: 'x' }, 'deny');
+  const stillRefused = wave('plan', '--agents', 'a2-designer');
+  check('hand-written canary.ok does not set a tier', stillRefused.status !== 0, stillRefused.stderr);
+  const bad = report('--tier', 'enforced');
+  check('--tier rejects enforced', bad.status !== 0, bad.stdout);
+  const advisory = report('--tier', 'advisory');
+  check('--tier advisory recorded', advisory.status === 0 && readFile(PROJECT, 'docs', 'runs', runName, 'tier.json').tier === 'advisory', advisory.stdout);
+  check('plan allowed once a tier exists', wave('plan', '--agents', 'a2-designer,a4-backend').status === 0, 'plan');
+  check('start records an advisory wave', wave('start', '--agents', 'a2-designer,a4-backend').status === 0 && /\[running\]/.test(wave('status').stdout), wave('status').stdout);
+  check('start refuses an agent outside the open wave', wave('start', '--agents', 'a12-qa').status !== 0, 'start');
+  expect('PM cannot write tier.json', 'pm', 'Write', { file_path: `${PROJECT}/docs/runs/${runName}/tier.json` }, 'deny');
+  rmSync(join(runPath(), 'canary.ok'));
+  rmSync(join(runPath(), 'tier.json'));
+  writeFileSync(join(runPath(), 'canary.ok'), `${JSON.stringify({ verified_by: 'guard-report' })}\n`);
+  check('valid canary.ok makes the run enforced', /Tier: enforced/.test(report().stdout), report().stdout);
+  const downgrade = report('--tier', 'advisory');
+  check('enforced run cannot be downgraded', downgrade.status !== 0, downgrade.stdout);
+  check('start refused on an enforced run', wave('start', '--agents', 'a2-designer').status !== 0, 'start');
+}
+
 function busAndWaveFlow() {
   root = mkdtempSync(join(tmpdir(), 'guard-selftest-bus-'));
   roots.push(root);
   setUp(25);
-  writeFileSync(join(runPath(), 'canary.ok'), '{}');
+  tierCases();
   waveCases();
   busCases();
   waveFinishCases();

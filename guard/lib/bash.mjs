@@ -37,7 +37,7 @@ function placeholders(ctx) {
   return {
     PROJECT: `(?:${project.join('|')})`,
     PROJECTNAME: escapeRegex(ctx.projectRel),
-    SKILL: escapeRegex(ctx.skillDir),
+    SKILL: ctx.skillAlias ? `(?:${escapeRegex(ctx.skillDir)}|\\./${escapeRegex(ctx.skillAlias)}|${escapeRegex(ctx.skillAlias)})` : escapeRegex(ctx.skillDir),
     ARG,
     PKG,
   };

@@ -1,0 +1,27 @@
+name: Agent platform adapter
+description: Request or offer support for another agent platform
+labels: [adapter]
+body:
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+    validations:
+      required: true
+  - type: dropdown
+    id: hooks
+    attributes:
+      label: Does the platform run a hook before every tool call, for sub-agents too?
+      options: [Yes, No, Not sure]
+    validations:
+      required: true
+  - type: textarea
+    id: payload
+    attributes:
+      label: Hook payload and tool names
+      description: A captured example of what the hook receives (tool name, input fields, how a sub-agent is identified), or a link to the documentation. Please do not guess.
+  - type: textarea
+    id: tested
+    attributes:
+      label: What you tested
+      description: Which tier you ran (enforced, advisory, sequential) and whether the guard log kept growing across sessions.

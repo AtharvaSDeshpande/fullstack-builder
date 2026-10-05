@@ -13,6 +13,7 @@ const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const PLACEHOLDER_PATTERN = /^<.*>$/;
 const DECISION_SOURCES = ['client', 'document', 'pm-default'];
 
+const BLANK_TEMPLATE_PLACEHOLDERS = 5;
 const errors = [];
 const warnings = [];
 const addError = (path, message) => errors.push(`${path}: ${message}`);
@@ -224,6 +225,10 @@ function main() {
   warnings.forEach((line) => process.stdout.write(`WARN  ${line}\n`));
   errors.forEach((line) => process.stdout.write(`ERROR ${line}\n`));
   process.stdout.write(errors.length ? `FAILED: ${errors.length} error(s), ${warnings.length} warning(s)\n` : `OK: spec valid, ${warnings.length} warning(s)\n`);
+  const placeholders = errors.filter((line) => line.includes('unfilled placeholder')).length;
+  if (placeholders >= BLANK_TEMPLATE_PLACEHOLDERS) {
+    process.stdout.write(`NOTE: ${placeholders} fields still hold <placeholders>, so this looks like a blank template. Fill it in (see examples/site.spec.json for a complete spec) or run the bootstrap interview.\n`);
+  }
   process.exit(errors.length ? 1 : 0);
 }
 

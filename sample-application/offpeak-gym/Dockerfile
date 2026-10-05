@@ -1,3 +1,5 @@
+# Single container on purpose: vite.config.js proxies /api to localhost:3001, so the web and API processes share a network namespace.
+# .dockerignore keeps .env and the host's node_modules (native better-sqlite3 build) out of the image.
 FROM node:20-alpine AS builder
 
 WORKDIR /app

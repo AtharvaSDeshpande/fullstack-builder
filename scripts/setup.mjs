@@ -11,12 +11,13 @@
  *   auto         claude-code when ./.claude exists or CLAUDECODE is set, otherwise generic
  */
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readlinkSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SKILL_DIR = realpathSync(resolve(dirname(fileURLToPath(import.meta.url)), '..'));
 const SAFE_PATH = /^[A-Za-z0-9_./@:=+,-]+$/;
+const SKILL_ALIAS = '.fullstack-builder/skill';
 const FEATURE_ID = /^[a-z0-9][a-z0-9-]*$/;
 const GUARD_REL = '.fullstack-builder/guard';
 const HOSTS = ['claude-code', 'generic'];
@@ -118,6 +119,30 @@ function mergeSettings(settingsPath) {
   writeFileSync(settingsPath, `${JSON.stringify({ ...settings, hooks }, null, 2)}\n`);
 }
 
+/** The guard only accepts plain path characters in shell commands, so a skill path with spaces is reached through a symlink inside the session root. */
+function linkSkill(sessionRoot) {
+  if (SAFE_PATH.test(SKILL_DIR)) return null;
+  const link = join(sessionRoot, SKILL_ALIAS);
+  mkdirSync(dirname(link), { recursive: true });
+  const existing = (() => {
+    try {
+      return lstatSync(link);
+    } catch {
+      return null;
+    }
+  })();
+  if (existing && !existing.isSymbolicLink()) fail(`${link} exists and is not a symlink. Remove it and rerun.`);
+  if (existing && readlinkSync(link) !== SKILL_DIR) rmSync(link);
+  if (!existing || readlinkSync(link) !== SKILL_DIR) {
+    try {
+      symlinkSync(SKILL_DIR, link, 'dir');
+    } catch (error) {
+      fail(`skill path "${SKILL_DIR}" has characters the guard cannot allow and a symlink could not be made (${error.code}). Copy the skill to a path without spaces.`);
+    }
+  }
+  return SKILL_ALIAS;
+}
+
 function resolveHost(argv, sessionRoot) {
   const index = argv.indexOf('--host');
   const asked = index >= 0 ? argv[index + 1] : 'auto';
@@ -129,7 +154,6 @@ function resolveHost(argv, sessionRoot) {
 function runInstall(argv) {
   const specPath = argv[0];
   if (!specPath || !existsSync(specPath)) fail('usage: setup.mjs install <spec.json> [--host auto|claude-code|generic] (run from the session root)');
-  if (!SAFE_PATH.test(SKILL_DIR)) fail(`skill path "${SKILL_DIR}" has characters the guard cannot allow. Move the skill to a simple path.`);
   const check = spawnSync('node', [join(SKILL_DIR, 'scripts', 'validate-spec.mjs'), specPath], { encoding: 'utf8' });
   if (check.status !== 0) fail(`the spec is invalid:\n${check.stdout}`);
   const spec = readJson(specPath);
@@ -149,6 +173,7 @@ function runInstall(argv) {
     session_root: sessionRoot,
     project_rel: spec.project.slug,
     skill_dir: SKILL_DIR,
+    skill_alias: linkSkill(sessionRoot),
     max_agent_calls: spec.constraints?.max_agent_calls ?? template.max_agent_calls_default,
     forbidden_packages: [...(spec.constraints?.forbidden_packages ?? []), ...(spec.constraints?.libraries_forbidden ?? [])],
     passthrough_tools: [...new Set([...(template.passthrough_tools ?? []), ...(adapters[host].passthrough_tools ?? [])])],
@@ -174,6 +199,7 @@ function runInstall(argv) {
   });
 
   process.stdout.write(`Guard installed in ${guardDir} (host: ${host})\n`);
+  if (config.skill_alias) process.stdout.write(`The skill path has characters the guard rejects. Run skill scripts through ./${config.skill_alias}/scripts/... from the session root.\n`);
   process.stdout.write(`${config.agent_types.length} guarded agent types, max ${config.max_agent_calls} agent calls per run, project folder ./${spec.project.slug}\n`);
   process.stdout.write(host === 'claude-code' ? CLAUDE_NEXT : GENERIC_NEXT);
 }
